@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Placar Beach Tennis</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- SETS -->
+      <div class="sets-wrapper">
+        <div class="sets-label">Pontuação dos Sets</div>
+
+        <div class="sets">
+          <div class="set">
+            <div class="set-title">Time A</div>
+            <div class="set-value" id="setsA">0</div>
+          </div>
+          <div class="set">
+            <div class="set-title">Time B</div>
+            <div class="set-value" id="setsB">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PONTUAÇÃO DA PARTIDA -->
+      <div class="points-wrapper">
+        <div class="points-label-global">Pontuação da partida</div>
+        <!-- TIMES -->
+
+        <div class="teams">
+          <div class="team">
+            <h2>Time A</h2>
+            <div class="score" id="pointsA">0</div>
+            <button class="add" onclick="safeClick(() => addPoint('A'))">
+              +1 Ponto
+            </button>
+            <button class="remove" onclick="safeClick(() => removePoint('A'))">
+              -1 Ponto
+            </button>
+          </div>
+
+          <div class="team">
+            <h2>Time B</h2>
+            <div class="score" id="pointsB">0</div>
+            <button class="add" onclick="safeClick(() => addPoint('B'))">
+              +1 Ponto
+            </button>
+            <button class="remove" onclick="safeClick(() => removePoint('B'))">
+              -1 Ponto
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESET -->
+      <button class="reset" onclick="safeClick(resetGame)">Nova Partida</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
