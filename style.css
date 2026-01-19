@@ -25,3 +25,7 @@ button {
 .progressB.active {
   transform: scaleX(1.05);
 }
+
+main {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+}
