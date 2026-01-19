@@ -1,62 +1,168 @@
 <!doctype html>
-<html lang="pt-BR">
+<html class="dark" lang="pt-BR">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Placar Beach Tennis</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#17cfcf',
+              'accent-orange': '#FC5D24',
+              'background-dark': '#16181d',
+              'card-dark': '#232529'
+            },
+            fontFamily: {
+              display: ['Spline Sans', 'sans-serif']
+            }
+          }
+        }
+      }
+    </script>
+
     <link rel="stylesheet" href="style.css" />
+
+    <title>Beach Tennis Pro</title>
   </head>
-  <body>
-    <div class="app">
-      <!-- SETS -->
-      <div class="sets-wrapper">
-        <div class="sets-label">Pontuação dos Sets</div>
 
-        <div class="sets">
-          <div class="set">
-            <div class="set-title">Time A</div>
-            <div class="set-value" id="setsA">0</div>
-          </div>
-          <div class="set">
-            <div class="set-title">Time B</div>
-            <div class="set-value" id="setsB">0</div>
-          </div>
-        </div>
-      </div>
+  <body
+    class="bg-background-dark font-display text-white min-h-screen flex flex-col"
+  >
+    <header class="p-4 text-center">
+      <h1 class="font-black uppercase tracking-tight">Beach Tennis Pro</h1>
+      <span class="text-primary text-xs tracking-widest">LIVE MATCH</span>
+    </header>
 
-      <!-- PONTUAÇÃO DA PARTIDA -->
-      <div class="points-wrapper">
-        <div class="points-label-global">Pontuação da partida</div>
-        <!-- TIMES -->
+    <main class="flex-1 max-w-md mx-auto w-full">
+      <section class="px-6 py-4">
+        <div class="bg-card-dark/60 rounded-2xl p-4 text-center">
+          <h3
+            class="text-primary text-xs font-bold tracking-[0.3em] uppercase mb-3"
+          >
+            Pontuação dos Sets
+          </h3>
 
-        <div class="teams">
-          <div class="team">
-            <h2>Time A</h2>
-            <div class="score" id="pointsA">0</div>
-            <button class="add" onclick="safeClick(() => addPoint('A'))">
-              +1 Ponto
-            </button>
-            <button class="remove" onclick="safeClick(() => removePoint('A'))">
-              -1 Ponto
-            </button>
-          </div>
+          <div class="flex items-center justify-center gap-8">
+            <div class="text-center">
+              <div id="setsA" class="text-4xl font-black">0</div>
+              <span class="text-[10px] opacity-50 uppercase">Time A</span>
+            </div>
 
-          <div class="team">
-            <h2>Time B</h2>
-            <div class="score" id="pointsB">0</div>
-            <button class="add" onclick="safeClick(() => addPoint('B'))">
-              +1 Ponto
-            </button>
-            <button class="remove" onclick="safeClick(() => removePoint('B'))">
-              -1 Ponto
-            </button>
+            <div class="h-10 w-px bg-white/10 rounded-full"></div>
+
+            <div class="text-center">
+              <div id="setsB" class="text-4xl font-black">0</div>
+              <span class="text-[10px] opacity-50 uppercase">Time B</span>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- RESET -->
-      <button class="reset" onclick="safeClick(resetGame)">Nova Partida</button>
-    </div>
+      <section class="px-4 py-2">
+        <h4
+          class="text-center text-xs tracking-[0.3em] opacity-40 uppercase mb-4"
+        >
+          Pontuação da Partida
+        </h4>
+
+        <div class="flex gap-3">
+          <div
+            id="cardA"
+            class="flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 border-primary transition-all"
+          >
+            <span class="text-primary text-xs uppercase font-bold">Time A</span>
+            <div class="flex-1 flex items-center justify-center">
+              <span id="pointsA" class="text-7xl font-black">0</span>
+            </div>
+            <div class="flex gap-1 mt-2">
+              <div class="progressA h-1.5 w-6 rounded-full bg-white/10"></div>
+              <div class="progressA h-1.5 w-6 rounded-full bg-white/10"></div>
+              <div class="progressA h-1.5 w-6 rounded-full bg-white/10"></div>
+              <div class="progressA h-1.5 w-6 rounded-full bg-white/10"></div>
+            </div>
+          </div>
+
+          <div
+            id="cardB"
+            class="flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 border-accent-orange transition-all"
+          >
+            <span class="text-accent-orange text-xs uppercase font-bold"
+              >Time B</span
+            >
+            <div class="flex-1 flex items-center justify-center">
+              <span id="pointsB" class="text-7xl font-black">0</span>
+            </div>
+            <div class="flex gap-1 mt-2">
+              <div class="progressB h-1.5 w-6 rounded-full bg-white/10"></div>
+              <div class="progressB h-1.5 w-6 rounded-full bg-white/10"></div>
+              <div class="progressB h-1.5 w-6 rounded-full bg-white/10"></div>
+              <div class="progressB h-1.5 w-6 rounded-full bg-white/10"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="px-6 pb-8 mt-6">
+        <div class="grid grid-cols-2 gap-6">
+          <div class="flex flex-col gap-3">
+            <button
+              onclick="addPoint('A')"
+              class="w-full aspect-square flex items-center justify-center bg-primary rounded-3xl text-background-dark shadow-lg shadow-primary/20 active:scale-95 transition-transform"
+            >
+              <span class="material-symbols-outlined text-5xl font-bold"
+                >add</span
+              >
+            </button>
+            <button
+              onclick="removePoint('A')"
+              class="w-full py-3 flex items-center justify-center bg-white/5 rounded-xl text-white/40 active:bg-white/10 transition-colors"
+            >
+              <span class="material-symbols-outlined">remove</span>
+            </button>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <button
+              onclick="addPoint('B')"
+              class="w-full aspect-square flex items-center justify-center bg-accent-orange rounded-3xl text-white shadow-lg shadow-accent-orange/20 active:scale-95 transition-transform"
+            >
+              <span class="material-symbols-outlined text-5xl font-bold"
+                >add</span
+              >
+            </button>
+            <button
+              onclick="removePoint('B')"
+              class="w-full py-3 flex items-center justify-center bg-white/5 rounded-xl text-white/40 active:bg-white/10 transition-colors"
+            >
+              <span class="material-symbols-outlined">remove</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="px-4 pb-6">
+        <button
+          onclick="resetGame()"
+          class="w-full h-16 bg-white text-background-dark rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl"
+        >
+          Nova Partida
+        </button>
+      </footer>
+    </main>
 
     <script src="script.js"></script>
   </body>
