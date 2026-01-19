@@ -1,5 +1,15 @@
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 html, body {
   touch-action: manipulation;
+}
+
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .leading {
