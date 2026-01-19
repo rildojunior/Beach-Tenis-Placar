@@ -209,14 +209,14 @@
         <!-- Sets para vencer -->
         <div>
           <label class="text-xs uppercase opacity-60">Sets para vencer</label>
-          <select
-            id="setsToWin"
-            class="w-full mt-1 bg-card-dark text-white rounded-xl p-3 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary"
-          >
-            <option value="1">1 Set</option>
-            <option value="3">3 Sets</option>
-            <option value="5">5 Sets</option>
-          </select>
+<input id="setsToWin"
+  type="number"
+  min="1"
+  step="1"
+  placeholder="Ex: 3"
+  class="w-full mt-1 bg-card-dark text-white rounded-xl p-3
+         border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary">
+
         </div>
 
         <button

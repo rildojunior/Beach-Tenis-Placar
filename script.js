@@ -33,7 +33,8 @@ function closeSettings() {
 
 function applySettings() {
   settings.scoringMode = document.getElementById('scoringMode').value
-  settings.setsToWin = Number(document.getElementById('setsToWin').value)
+  const value = Number(document.getElementById('setsToWin').value)
+  settings.setsToWin = value > 0 ? value : 1
   saveSettings()
   closeSettings()
 }
