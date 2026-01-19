@@ -1,5 +1,6 @@
 let settings = {
-  scoringMode: 'simplified', // "official" | "simplified"
+  scoringMode: 'simplified',
+  setsEnabled: false, // 🔴 padrão: infinito
   setsToWin: 3
 }
 
@@ -10,9 +11,14 @@ let pointsA = 0,
 
 function loadSettings() {
   const s = localStorage.getItem('bt-settings')
-  if (s) settings = JSON.parse(s)
+  if (s) {
+    settings = JSON.parse(s)
+  } else {
+    saveSettings() // salva padrão infinito na primeira vez
+  }
   document.getElementById('scoringMode').value = settings.scoringMode
   document.getElementById('setsToWin').value = settings.setsToWin
+  applySetsToggleUI()
 }
 
 function saveSettings() {
@@ -31,6 +37,30 @@ function closeSettings() {
   modal.classList.remove('flex')
 }
 
+function toggleSetsEnabled() {
+  settings.setsEnabled = !settings.setsEnabled
+  applySetsToggleUI()
+  saveSettings()
+}
+
+function applySetsToggleUI() {
+  const wrapper = document.getElementById('setsInputWrapper')
+  const toggle = document.getElementById('toggleSets')
+  const circle = document.getElementById('toggleCircle')
+
+  if (settings.setsEnabled) {
+    toggle.classList.remove('bg-white/10')
+    toggle.classList.add('bg-primary')
+    circle.style.transform = 'translateX(24px)'
+    wrapper.classList.remove('hidden')
+  } else {
+    toggle.classList.add('bg-white/10')
+    toggle.classList.remove('bg-primary')
+    circle.style.transform = 'translateX(0)'
+    wrapper.classList.add('hidden')
+  }
+}
+
 function applySettings() {
   settings.scoringMode = document.getElementById('scoringMode').value
   const value = Number(document.getElementById('setsToWin').value)
@@ -47,6 +77,8 @@ function getDisplayPoint(points) {
 }
 
 function checkMatchEnd() {
+  if (!settings.setsEnabled) return
+
   if (setsA === settings.setsToWin || setsB === settings.setsToWin) {
     const winner = setsA > setsB ? 'Time A' : 'Time B'
     showWinner(winner)

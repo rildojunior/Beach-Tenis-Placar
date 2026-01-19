@@ -205,17 +205,30 @@
             <option value="simplified">Simplificada (1,2,3)</option>
           </select>
         </div>
+<div class="flex items-center justify-between">
+  <label class="text-xs uppercase opacity-60">
+    Sets para Vencer
+  </label>
+  <button id="toggleSets"
+    onclick="toggleSetsEnabled()"
+    class="w-12 h-6 rounded-full bg-white/10 relative transition-colors">
+    <span id="toggleCircle"
+      class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform">
+    </span>
+  </button>
+</div>
 
         <!-- Sets para vencer -->
         <div>
-          <label class="text-xs uppercase opacity-60">Sets para vencer</label>
-<input id="setsToWin"
-  type="number"
-  min="1"
-  step="1"
-  placeholder="Ex: 3"
-  class="w-full mt-1 bg-card-dark text-white rounded-xl p-3
-         border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary">
+<div id="setsInputWrapper" class="mt-3 hidden">
+  <input id="setsToWin"
+    type="number"
+    min="1"
+    step="1"
+    placeholder="Ex: 3"
+    class="w-full mt-1 bg-card-dark text-white rounded-xl p-3
+           border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary">
+</div>
 
         </div>
 
