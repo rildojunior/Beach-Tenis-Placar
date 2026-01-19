@@ -20,11 +20,15 @@ function saveSettings() {
 }
 
 function openSettings() {
-  document.getElementById('settingsModal').classList.remove('hidden')
+  const modal = document.getElementById('settingsModal')
+  modal.classList.remove('hidden')
+  modal.classList.add('flex')
 }
 
 function closeSettings() {
-  document.getElementById('settingsModal').classList.add('hidden')
+  const modal = document.getElementById('settingsModal')
+  modal.classList.add('hidden')
+  modal.classList.remove('flex')
 }
 
 function applySettings() {
@@ -139,13 +143,17 @@ document.addEventListener(
 )
 
 function showWinner(team) {
+  const modal = document.getElementById('winnerModal')
   document.getElementById('winnerText').textContent =
     team + ' venceu a partida!'
-  document.getElementById('winnerModal').classList.remove('hidden')
+  modal.classList.remove('hidden')
+  modal.classList.add('flex')
 }
 
 function closeWinner() {
-  document.getElementById('winnerModal').classList.add('hidden')
+  const modal = document.getElementById('winnerModal')
+  modal.classList.add('hidden')
+  modal.classList.remove('flex')
 }
 
 const pointsAEl = document.getElementById('pointsA')
