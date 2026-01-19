@@ -1,7 +1,52 @@
+let settings = {
+  scoringMode: 'simplified', // "official" | "simplified"
+  setsToWin: 3
+}
+
 let pointsA = 0,
   pointsB = 0,
   setsA = 0,
   setsB = 0
+
+function loadSettings() {
+  const s = localStorage.getItem('bt-settings')
+  if (s) settings = JSON.parse(s)
+  document.getElementById('scoringMode').value = settings.scoringMode
+  document.getElementById('setsToWin').value = settings.setsToWin
+}
+
+function saveSettings() {
+  localStorage.setItem('bt-settings', JSON.stringify(settings))
+}
+
+function openSettings() {
+  document.getElementById('settingsModal').classList.remove('hidden')
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.add('hidden')
+}
+
+function applySettings() {
+  settings.scoringMode = document.getElementById('scoringMode').value
+  settings.setsToWin = Number(document.getElementById('setsToWin').value)
+  saveSettings()
+  closeSettings()
+}
+
+function getDisplayPoint(points) {
+  if (settings.scoringMode === 'official') {
+    return ['0', '15', '30', '40'][points] || '40'
+  }
+  return points
+}
+
+function checkMatchEnd() {
+  if (setsA === settings.setsToWin || setsB === settings.setsToWin) {
+    const winner = setsA > setsB ? 'Time A' : 'Time B'
+    showWinner(winner)
+  }
+}
 
 function addPoint(team) {
   if (team === 'A') {
@@ -17,6 +62,7 @@ function addPoint(team) {
       resetPoints()
     }
   }
+  checkMatchEnd()
   save()
   update()
 }
@@ -53,8 +99,8 @@ function updateProgress() {
 }
 
 function update() {
-  pointsAEl.textContent = pointsA
-  pointsBEl.textContent = pointsB
+  pointsAEl.textContent = getDisplayPoint(pointsA)
+  pointsBEl.textContent = getDisplayPoint(pointsB)
   setsAEl.textContent = setsA
   setsBEl.textContent = setsB
 
@@ -92,6 +138,16 @@ document.addEventListener(
   { passive: false }
 )
 
+function showWinner(team) {
+  document.getElementById('winnerText').textContent =
+    team + ' venceu a partida!'
+  document.getElementById('winnerModal').classList.remove('hidden')
+}
+
+function closeWinner() {
+  document.getElementById('winnerModal').classList.add('hidden')
+}
+
 const pointsAEl = document.getElementById('pointsA')
 const pointsBEl = document.getElementById('pointsB')
 const setsAEl = document.getElementById('setsA')
@@ -100,3 +156,4 @@ const cardA = document.getElementById('cardA')
 const cardB = document.getElementById('cardB')
 
 load()
+loadSettings()
