@@ -4,6 +4,19 @@ let settings = {
   setsToWin: 3
 }
 
+let teamNames = {
+  A: 'Time A',
+  B: 'Time B'
+}
+
+function updateTeamNamesUI() {
+  document.getElementById('teamNameA').textContent = teamNames.A
+  document.getElementById('teamNameB').textContent = teamNames.B
+
+  document.getElementById('teamNameASet').textContent = teamNames.A
+  document.getElementById('teamNameBSet').textContent = teamNames.B
+}
+
 let pointsA = 0,
   pointsB = 0,
   setsA = 0,
@@ -23,6 +36,17 @@ function loadSettings() {
 
 function saveSettings() {
   localStorage.setItem('bt-settings', JSON.stringify(settings))
+}
+
+function loadTeamNames() {
+  const saved = localStorage.getItem('bt-team-names')
+  if (saved) {
+    teamNames = JSON.parse(saved)
+  }
+}
+
+function saveTeamNames() {
+  localStorage.setItem('bt-team-names', JSON.stringify(teamNames))
 }
 
 function openSettings() {
@@ -80,7 +104,7 @@ function checkMatchEnd() {
   if (!settings.setsEnabled) return
 
   if (setsA === settings.setsToWin || setsB === settings.setsToWin) {
-    const winner = setsA > setsB ? 'Time A' : 'Time B'
+    const winner = setsA > setsB ? teamNames.A : teamNames.B
     showWinner(winner)
   }
 }
@@ -189,6 +213,25 @@ function closeWinner() {
   modal.classList.remove('flex')
 }
 
+function setupTeamNameEditing() {
+  const elA = document.getElementById('teamNameA')
+  const elB = document.getElementById('teamNameB')
+
+  elA.addEventListener('blur', () => {
+    const value = elA.textContent.trim()
+    teamNames.A = value || 'Time A'
+    saveTeamNames()
+    updateTeamNamesUI()
+  })
+
+  elB.addEventListener('blur', () => {
+    const value = elB.textContent.trim()
+    teamNames.B = value || 'Time B'
+    saveTeamNames()
+    updateTeamNamesUI()
+  })
+}
+
 const pointsAEl = document.getElementById('pointsA')
 const pointsBEl = document.getElementById('pointsB')
 const setsAEl = document.getElementById('setsA')
@@ -197,4 +240,10 @@ const cardA = document.getElementById('cardA')
 const cardB = document.getElementById('cardB')
 
 load()
+loadTeamNames()
+document.getElementById('teamNameA').textContent = teamNames.A
+document.getElementById('teamNameB').textContent = teamNames.B
 loadSettings()
+loadTeamNames()
+updateTeamNamesUI()
+setupTeamNameEditing()

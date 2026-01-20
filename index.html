@@ -79,14 +79,22 @@
           <div class="flex items-center justify-center gap-8">
             <div class="text-center">
               <div id="setsA" class="text-4xl font-black">0</div>
-              <span class="text-[10px] opacity-50 uppercase">Time A</span>
+              <span id="teamNameASet"
+  class="text-[10px] opacity-50 uppercase">
+  Time A
+</span>
+
             </div>
 
             <div class="h-10 w-px bg-white/10 rounded-full"></div>
 
             <div class="text-center">
               <div id="setsB" class="text-4xl font-black">0</div>
-              <span class="text-[10px] opacity-50 uppercase">Time B</span>
+              <span id="teamNameBSet"
+  class="text-[10px] opacity-50 uppercase">
+  Time B
+</span>
+
             </div>
           </div>
         </div>
@@ -104,7 +112,12 @@
             id="cardA"
             class="flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 border-primary transition-all"
           >
-            <span class="text-primary text-xs uppercase font-bold">Time A</span>
+            <span id="teamNameA"
+  contenteditable="true"
+  spellcheck="false"
+  class="text-primary text-xs uppercase font-bold focus:outline-none">
+  Time A
+</span>
             <div class="flex-1 flex items-center justify-center">
               <span id="pointsA" class="text-7xl font-black">0</span>
             </div>
@@ -120,9 +133,13 @@
             id="cardB"
             class="flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 border-accent-orange transition-all"
           >
-            <span class="text-accent-orange text-xs uppercase font-bold"
-              >Time B</span
-            >
+          <span id="teamNameB"
+  contenteditable="true"
+  spellcheck="false"
+  class="text-accent-orange text-xs uppercase font-bold focus:outline-none">
+  Time B
+</span>
+
             <div class="flex-1 flex items-center justify-center">
               <span id="pointsB" class="text-7xl font-black">0</span>
             </div>
