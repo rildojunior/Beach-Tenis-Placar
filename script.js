@@ -117,8 +117,8 @@ function checkMatchEnd() {
   if (!settings.setsEnabled) return
 
   if (setsA === settings.setsToWin || setsB === settings.setsToWin) {
-    const winner = setsA > setsB ? teamNames.A : teamNames.B
-    showWinner(winner)
+    const winnerKey = setsA > setsB ? 'A' : 'B'
+    showWinner(winnerKey)
   }
 }
 
@@ -212,10 +212,20 @@ document.addEventListener(
   { passive: false }
 )
 
-function showWinner(team) {
+function showWinner(teamKey) {
   const modal = document.getElementById('winnerModal')
-  document.getElementById('winnerText').textContent =
-    team + ' venceu a partida!'
+  const nameEl = document.getElementById('winnerName')
+
+  const isTeamA = teamKey === 'A'
+
+  nameEl.textContent = teamNames[teamKey]
+
+  // limpa cores anteriores
+  nameEl.classList.remove('text-primary', 'text-accent-orange')
+
+  // aplica cor correta só no nome
+  nameEl.classList.add(isTeamA ? 'text-primary' : 'text-accent-orange')
+
   modal.classList.remove('hidden')
   modal.classList.add('flex')
 }
