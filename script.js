@@ -9,6 +9,15 @@ let teamNames = {
   B: 'Time B'
 }
 
+function selectAllText(element) {
+  const range = document.createRange()
+  range.selectNodeContents(element)
+
+  const selection = window.getSelection()
+  selection.removeAllRanges()
+  selection.addRange(range)
+}
+
 function updateTeamNamesUI() {
   document.getElementById('teamNameA').textContent = teamNames.A
   document.getElementById('teamNameB').textContent = teamNames.B
@@ -216,6 +225,14 @@ function closeWinner() {
 function setupTeamNameEditing() {
   const elA = document.getElementById('teamNameA')
   const elB = document.getElementById('teamNameB')
+
+  elA.addEventListener('focus', () => {
+    setTimeout(() => selectAllText(elA), 0)
+  })
+
+  elB.addEventListener('focus', () => {
+    setTimeout(() => selectAllText(elB), 0)
+  })
 
   elA.addEventListener('blur', () => {
     const value = elA.textContent.trim()
