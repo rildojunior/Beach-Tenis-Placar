@@ -9,6 +9,10 @@ let teamNames = {
   B: 'Time B'
 }
 
+const isStandalone =
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone === true
+
 function selectAllText(element) {
   const range = document.createRange()
   range.selectNodeContents(element)
@@ -269,3 +273,59 @@ load()
 loadTeamNames()
 updateTeamNamesUI()
 setupTeamNameEditing()
+
+let deferredPrompt = null
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault()
+  deferredPrompt = e
+
+  // não mostrar se já foi fechado antes
+  if (!localStorage.getItem('bt-install-dismissed')) {
+    showInstallPrompt()
+  }
+})
+
+function showInstallPrompt() {
+  document.getElementById('installPrompt').classList.remove('hidden')
+}
+
+function hideInstallPrompt() {
+  document.getElementById('installPrompt').classList.add('hidden')
+}
+
+async function installApp() {
+  if (!deferredPrompt) return
+
+  deferredPrompt.prompt()
+  const result = await deferredPrompt.userChoice
+
+  deferredPrompt = null
+  hideInstallPrompt()
+
+  // se recusou, não insistir
+  if (result.outcome === 'dismissed') {
+    localStorage.setItem('bt-install-dismissed', '1')
+  }
+}
+
+if (
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone === true
+) {
+  const el = document.getElementById('installPrompt')
+  if (el) el.remove()
+}
+
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
+const isInStandalone = window.navigator.standalone === true
+
+if (isIOS && !isInStandalone && !localStorage.getItem('bt-install-dismissed')) {
+  const prompt = document.getElementById('installPrompt')
+  if (prompt) {
+    prompt.querySelector('button').style.display = 'none'
+    prompt.querySelector('p:nth-child(2)').textContent =
+      'No iPhone: compartilhar → Adicionar à Tela de Início'
+    showInstallPrompt()
+  }
+}

@@ -39,6 +39,14 @@
 
     <link rel="stylesheet" href="style.css" />
 
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#16181d">
+
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
     <title>Beach Tennis Pro</title>
   </head>
 
@@ -281,5 +289,28 @@
     </div>
 
     <script src="script.js"></script>
+
+    <div id="installPrompt"
+  class="fixed bottom-24 left-1/2 -translate-x-1/2 hidden z-50
+         bg-card-dark text-white px-5 py-4 rounded-2xl shadow-xl
+         flex items-center gap-4 max-w-sm w-[90%]">
+
+  <span class="material-symbols-outlined text-3xl text-primary">
+    download
+  </span>
+
+  <div class="flex-1">
+    <p class="font-bold text-sm">Instalar App</p>
+    <p class="text-xs opacity-70">
+      Adicione o placar à tela inicial
+    </p>
+  </div>
+
+  <button onclick="installApp()"
+    class="bg-primary text-background-dark px-4 py-2 rounded-xl font-bold">
+    Instalar
+  </button>
+</div>
+
   </body>
 </html>
