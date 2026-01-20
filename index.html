@@ -221,9 +221,20 @@
       class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 px-4"
     >
       <div class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4 modal-content" onclick="event.stopPropagation()">
-        <h2 class="text-lg font-black uppercase tracking-wide">
-          Configurações
-        </h2>
+<div class="relative">
+  <h2 class="text-lg font-black text-center uppercase tracking-wide">
+    Configurações
+  </h2>
+
+  <button
+    onclick="closeModal('settingsModal')"
+    aria-label="Fechar configurações"
+    class="absolute right-0 top-1/2 -translate-y-1/2
+           p-2 rounded-xl hover:bg-white/10 transition">
+    <span class="material-symbols-outlined text-xl">close</span>
+  </button>
+</div>
+
 
         <div class="mt-4 space-y-3">
   <p class="text-xs uppercase opacity-60">
@@ -369,9 +380,20 @@
   <div class="bg-card-dark rounded-2xl p-5 w-full max-w-sm space-y-4 modal-content"
        onclick="event.stopPropagation()">
 
-    <h2 class="text-lg font-black text-center uppercase tracking-wide">
-      Histórico de Partidas
-    </h2>
+<div class="relative">
+  <h2 class="text-lg font-black text-center uppercase tracking-wide">
+    Histórico de Partidas
+  </h2>
+
+  <button
+    onclick="closeModal('historyModal')"
+    aria-label="Fechar histórico"
+    class="absolute right-0 top-1/2 -translate-y-1/2
+           p-2 rounded-xl hover:bg-white/10 transition">
+    <span class="material-symbols-outlined text-xl">close</span>
+  </button>
+</div>
+
 
     <button onclick="openClearHistoryModal()"
   class="w-full h-10 rounded-xl border border-white/10
