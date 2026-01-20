@@ -532,3 +532,15 @@ function dismissInstallPrompt() {
   hideInstallPrompt()
   deferredPrompt = null
 }
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('./service-worker.js')
+      .catch(err => console.error('SW erro:', err))
+  })
+}
+
+navigator.serviceWorker?.addEventListener('controllerchange', () => {
+  window.location.reload()
+})
