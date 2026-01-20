@@ -63,6 +63,8 @@ function saveTeamNames() {
 }
 
 function openSettings() {
+  document.getElementById('teamNameAInput').value = teamNames.A
+  document.getElementById('teamNameBInput').value = teamNames.B
   const modal = document.getElementById('settingsModal')
   modal.classList.remove('hidden')
   modal.classList.add('flex')
@@ -271,6 +273,23 @@ function setupTeamNameEditing() {
   })
 }
 
+function setupTeamNameInputs() {
+  const inputA = document.getElementById('teamNameAInput')
+  const inputB = document.getElementById('teamNameBInput')
+
+  inputA.addEventListener('input', () => {
+    teamNames.A = inputA.value.trim() || 'Time A'
+    saveTeamNames()
+    updateTeamNamesUI()
+  })
+
+  inputB.addEventListener('input', () => {
+    teamNames.B = inputB.value.trim() || 'Time B'
+    saveTeamNames()
+    updateTeamNamesUI()
+  })
+}
+
 const pointsAEl = document.getElementById('pointsA')
 const pointsBEl = document.getElementById('pointsB')
 const setsAEl = document.getElementById('setsA')
@@ -283,6 +302,7 @@ load()
 loadTeamNames()
 updateTeamNamesUI()
 setupTeamNameEditing()
+setupTeamNameInputs()
 
 let deferredPrompt = null
 
