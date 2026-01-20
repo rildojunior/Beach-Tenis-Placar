@@ -46,6 +46,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 
     <title>Beach Tennis</title>
   </head>
@@ -341,6 +343,35 @@
         </button>
       </div>
     </div>
+
+    <div
+  id="tieModal"
+  onclick="closeTieModal()"
+  class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4"
+>
+  <div
+    class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4 modal-content"
+    onclick="event.stopPropagation()"
+  >
+    <h2 class="text-lg font-black text-center uppercase tracking-wide">
+      Partida Empatada
+    </h2>
+
+    <p class="text-sm text-center opacity-70 leading-relaxed">
+      A partida está empatada em sets.
+      <br />
+      É necessário realizar o desempate antes de finalizar.
+    </p>
+
+    <button
+      onclick="closeTieModal()"
+      class="w-full h-12 bg-primary text-background-dark rounded-xl font-black uppercase tracking-widest active:scale-95 transition-transform"
+    >
+      Continuar Partida
+    </button>
+  </div>
+</div>
+
 
     <script src="script.js"></script>
 

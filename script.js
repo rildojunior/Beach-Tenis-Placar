@@ -156,33 +156,32 @@ function resetPoints() {
 }
 
 function finishMatch() {
-  // 1. Se estiver tudo zerado (0x0), apenas reinicia (sem modal, sem histórico)
-  if (pointsA === 0 && pointsB === 0 && setsA === 0 && setsB === 0) {
-    resetGame()
+  // 🔹 1. Sets 0x0 → apenas reseta, sem salvar histórico
+  if (setsA === 0 && setsB === 0) {
+    resetGameWithoutHistory()
     return
   }
 
-  // 2. Se tiver jogo, calcula quem ganhou
-  let winnerKey = 'A'
-
-  // Quem tem mais sets ganha
-  if (setsB > setsA) {
-    winnerKey = 'B'
-  }
-  // Se sets empatados, quem tem mais pontos ganha
-  else if (setsA === setsB) {
-    if (pointsB > pointsA) {
-      winnerKey = 'B'
-    }
+  // 🔹 2. Sets empatados → exige desempate
+  if (setsA === setsB) {
+    openTieModal()
+    return
   }
 
-  // 3. Mostra o modal de vitória
+  // 🔹 3. Existe vencedor → mesmo fluxo do sets para vencer
+  const winnerKey = setsA > setsB ? 'A' : 'B'
   showWinner(winnerKey)
 }
 
 function resetGame() {
   saveMatchToHistory()
 
+  pointsA = pointsB = setsA = setsB = 0
+  save()
+  update()
+}
+
+function resetGameWithoutHistory() {
   pointsA = pointsB = setsA = setsB = 0
   save()
   update()
@@ -293,6 +292,14 @@ function setupTeamNameEditing() {
   elB.addEventListener('keydown', e => {
     if (e.key === 'Enter') elB.blur()
   })
+}
+
+function openTieModal() {
+  openModal('tieModal')
+}
+
+function closeTieModal() {
+  closeModal('tieModal')
 }
 
 function setupTeamNameInputs() {
