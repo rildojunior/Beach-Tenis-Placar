@@ -60,3 +60,41 @@ main {
   transform: translate(-50%, 30px);
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
+
+/* ===== Modal Animations ===== */
+
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-enter .modal-content {
+  transform: scale(0.95);
+}
+
+.modal-enter-active {
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.modal-enter-active .modal-content {
+  transform: scale(1);
+  transition: transform 0.25s ease;
+}
+
+.modal-exit {
+  opacity: 1;
+}
+
+.modal-exit .modal-content {
+  transform: scale(1);
+}
+
+.modal-exit-active {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.modal-exit-active .modal-content {
+  transform: scale(0.95);
+  transition: transform 0.2s ease;
+}

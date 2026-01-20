@@ -65,6 +65,7 @@ function saveTeamNames() {
 }
 
 function openSettings() {
+  openModal('settingsModal')
   document.getElementById('teamNameAInput').value = teamNames.A
   document.getElementById('teamNameBInput').value = teamNames.B
   const modal = document.getElementById('settingsModal')
@@ -76,6 +77,7 @@ function closeSettings() {
   const modal = document.getElementById('settingsModal')
   modal.classList.add('hidden')
   modal.classList.remove('flex')
+  closeModal('settingsModal')
 }
 
 function toggleSetsEnabled() {
@@ -219,6 +221,7 @@ document.addEventListener(
 )
 
 function showWinner(teamKey) {
+  openModal('winnerModal')
   const modal = document.getElementById('winnerModal')
   const nameEl = document.getElementById('winnerName')
 
@@ -240,6 +243,7 @@ function closeWinner() {
   const modal = document.getElementById('winnerModal')
   modal.classList.add('hidden')
   modal.classList.remove('flex')
+  closeModal('winnerModal')
 }
 
 function setupTeamNameEditing() {
@@ -323,6 +327,7 @@ function saveMatchToHistory() {
 
 function openHistory() {
   renderHistory()
+  openModal('historyModal')
   const modal = document.getElementById('historyModal')
   modal.classList.remove('hidden')
   modal.classList.add('flex')
@@ -332,6 +337,7 @@ function closeHistory() {
   const modal = document.getElementById('historyModal')
   modal.classList.add('hidden')
   modal.classList.remove('flex')
+  closeModal('historyModal')
 }
 
 function renderHistory() {
@@ -385,6 +391,7 @@ function confirmClearHistory() {
 }
 
 function openClearHistoryModal() {
+  openModal('clearHistoryModal')
   const modal = document.getElementById('clearHistoryModal')
   modal.classList.remove('hidden')
   modal.classList.add('flex')
@@ -394,6 +401,33 @@ function closeClearHistoryModal() {
   const modal = document.getElementById('clearHistoryModal')
   modal.classList.add('hidden')
   modal.classList.remove('flex')
+  closeModal('clearHistoryModal')
+}
+
+function openModal(id) {
+  const modal = document.getElementById(id)
+  modal.classList.remove('hidden')
+  modal.classList.add('flex', 'modal-enter')
+
+  requestAnimationFrame(() => {
+    modal.classList.add('modal-enter-active')
+    modal.classList.remove('modal-enter')
+  })
+}
+
+function closeModal(id) {
+  const modal = document.getElementById(id)
+
+  modal.classList.add('modal-exit')
+  requestAnimationFrame(() => {
+    modal.classList.add('modal-exit-active')
+    modal.classList.remove('modal-exit')
+  })
+
+  setTimeout(() => {
+    modal.classList.add('hidden')
+    modal.classList.remove('flex', 'modal-exit-active')
+  }, 200)
 }
 
 const pointsAEl = document.getElementById('pointsA')
