@@ -155,6 +155,31 @@ function resetPoints() {
   pointsB = 0
 }
 
+function finishMatch() {
+  // 1. Se estiver tudo zerado (0x0), apenas reinicia (sem modal, sem histórico)
+  if (pointsA === 0 && pointsB === 0 && setsA === 0 && setsB === 0) {
+    resetGame()
+    return
+  }
+
+  // 2. Se tiver jogo, calcula quem ganhou
+  let winnerKey = 'A'
+
+  // Quem tem mais sets ganha
+  if (setsB > setsA) {
+    winnerKey = 'B'
+  }
+  // Se sets empatados, quem tem mais pontos ganha
+  else if (setsA === setsB) {
+    if (pointsB > pointsA) {
+      winnerKey = 'B'
+    }
+  }
+
+  // 3. Mostra o modal de vitória
+  showWinner(winnerKey)
+}
+
 function resetGame() {
   saveMatchToHistory()
 
@@ -297,10 +322,16 @@ function saveHistory() {
 }
 
 function saveMatchToHistory() {
-  // só salva se houve jogo
-  if (setsA === 0 && setsB === 0) return
+  // só salva se houve alguma pontuação
+  if (setsA === 0 && setsB === 0 && pointsA === 0 && pointsB === 0) return
 
-  const winnerKey = setsA > setsB ? 'A' : 'B'
+  // Determina vencedor para o histórico (Sets > Pontos)
+  let winnerKey = 'A'
+  if (setsB > setsA) {
+    winnerKey = 'B'
+  } else if (setsA === setsB && pointsB > pointsA) {
+    winnerKey = 'B'
+  }
 
   matchHistory.unshift({
     teamA: teamNames.A,
