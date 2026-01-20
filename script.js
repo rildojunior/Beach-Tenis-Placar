@@ -217,25 +217,27 @@ function setupTeamNameEditing() {
   const elA = document.getElementById('teamNameA')
   const elB = document.getElementById('teamNameB')
 
-  function syncA() {
+  elA.addEventListener('blur', () => {
     const value = elA.textContent.trim()
     teamNames.A = value || 'Time A'
     saveTeamNames()
     updateTeamNamesUI()
-  }
+  })
 
-  function syncB() {
+  elB.addEventListener('blur', () => {
     const value = elB.textContent.trim()
     teamNames.B = value || 'Time B'
     saveTeamNames()
     updateTeamNamesUI()
-  }
+  })
 
-  elA.addEventListener('blur', syncA)
-  elA.addEventListener('input', syncA)
+  elA.addEventListener('keydown', e => {
+    if (e.key === 'Enter') elA.blur()
+  })
 
-  elB.addEventListener('blur', syncB)
-  elB.addEventListener('input', syncB)
+  elB.addEventListener('keydown', e => {
+    if (e.key === 'Enter') elB.blur()
+  })
 }
 
 const pointsAEl = document.getElementById('pointsA')
