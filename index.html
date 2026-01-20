@@ -53,18 +53,23 @@
   <body
     class="bg-background-dark font-display text-white min-h-screen flex flex-col"
   >
-<header class="p-4 max-w-md mx-auto w-full grid grid-cols-3 items-center">
+<header class="p-4 max-w-md mx-auto w-full grid grid-cols-4 items-center">
   
-  <!-- Espaço vazio (equilíbrio visual) -->
-  <div></div>
+  <!-- Histórico -->
+  <div class="flex justify-start">
+    <button onclick="openHistory()"
+      class="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition">
+      <span class="material-symbols-outlined text-xl">history</span>
+    </button>
+  </div>
 
-  <!-- Título centralizado de verdade -->
-  <div class="text-center">
-    <h1 class="font-black uppercase tracking-tight">Beach Tennis</h1>
+  <!-- Título (ocupa 2 colunas) -->
+  <div class="col-span-2 text-center">
+    <h1 class="font-black uppercase tracking-tight">Beach Tennis Pro</h1>
     <span class="text-primary text-xs tracking-widest">LIVE MATCH</span>
   </div>
 
-  <!-- Botão de configurações -->
+  <!-- Configurações -->
   <div class="flex justify-end">
     <button onclick="openSettings()"
       class="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition">
@@ -73,6 +78,7 @@
   </div>
 
 </header>
+
 
 
     <main class="flex-1 max-w-md mx-auto w-full">
@@ -355,6 +361,25 @@
   </button>
 </div>
 </div>
+
+<div id="historyModal"
+  onclick="closeHistory()"
+  class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4">
+
+  <div class="bg-card-dark rounded-2xl p-5 w-full max-w-sm space-y-4"
+       onclick="event.stopPropagation()">
+
+    <h2 class="text-lg font-black text-center uppercase tracking-wide">
+      Histórico de Partidas
+    </h2>
+
+    <div id="historyList" class="space-y-3 max-h-[60vh] overflow-y-auto">
+      <!-- itens gerados via JS -->
+    </div>
+
+  </div>
+</div>
+
 
   </body>
 </html>

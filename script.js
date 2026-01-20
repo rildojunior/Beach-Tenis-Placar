@@ -4,6 +4,8 @@ let settings = {
   setsToWin: 3
 }
 
+let matchHistory = []
+
 let teamNames = {
   A: 'Time A',
   B: 'Time B'
@@ -156,6 +158,8 @@ function resetPoints() {
 }
 
 function resetGame() {
+  saveMatchToHistory()
+
   pointsA = pointsB = setsA = setsB = 0
   save()
   update()
@@ -290,6 +294,89 @@ function setupTeamNameInputs() {
   })
 }
 
+function loadHistory() {
+  const h = localStorage.getItem('bt-history')
+  if (h) matchHistory = JSON.parse(h)
+}
+
+function saveHistory() {
+  localStorage.setItem('bt-history', JSON.stringify(matchHistory))
+}
+
+function saveMatchToHistory() {
+  // só salva se houve jogo
+  if (setsA === 0 && setsB === 0) return
+
+  const winnerKey = setsA > setsB ? 'A' : 'B'
+
+  matchHistory.unshift({
+    teamA: teamNames.A,
+    teamB: teamNames.B,
+    setsA,
+    setsB,
+    winner: winnerKey,
+    date: new Date().toISOString()
+  })
+
+  saveHistory()
+}
+
+function openHistory() {
+  renderHistory()
+  const modal = document.getElementById('historyModal')
+  modal.classList.remove('hidden')
+  modal.classList.add('flex')
+}
+
+function closeHistory() {
+  const modal = document.getElementById('historyModal')
+  modal.classList.add('hidden')
+  modal.classList.remove('flex')
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList')
+  list.innerHTML = ''
+
+  if (matchHistory.length === 0) {
+    list.innerHTML = `
+      <p class="text-center text-sm opacity-50">
+        Nenhuma partida registrada
+      </p>
+    `
+    return
+  }
+
+  matchHistory.forEach(match => {
+    const date = new Date(match.date)
+    const formatted = date.toLocaleString()
+
+    const winnerColor =
+      match.winner === 'A' ? 'text-primary' : 'text-accent-orange'
+
+    list.innerHTML += `
+      <div class="bg-white/5 rounded-xl p-3 space-y-1">
+        <div class="flex justify-between text-sm font-bold">
+          <span class="${winnerColor}">
+            ${match.winner === 'A' ? match.teamA : match.teamB}
+          </span>
+          <span class="opacity-60">
+            ${match.setsA} x ${match.setsB}
+          </span>
+        </div>
+
+        <div class="text-xs opacity-50">
+          ${match.teamA} x ${match.teamB}
+        </div>
+
+        <div class="text-[10px] opacity-40">
+          ${formatted}
+        </div>
+      </div>
+    `
+  })
+}
+
 const pointsAEl = document.getElementById('pointsA')
 const pointsBEl = document.getElementById('pointsB')
 const setsAEl = document.getElementById('setsA')
@@ -300,6 +387,7 @@ const cardB = document.getElementById('cardB')
 loadSettings()
 load()
 loadTeamNames()
+loadHistory()
 updateTeamNamesUI()
 setupTeamNameEditing()
 setupTeamNameInputs()
