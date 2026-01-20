@@ -373,6 +373,14 @@
       Histórico de Partidas
     </h2>
 
+    <button onclick="openClearHistoryModal()"
+  class="w-full h-10 rounded-xl border border-white/10
+         text-xs uppercase tracking-widest opacity-60
+         hover:opacity-90 hover:bg-white/5 transition">
+  Limpar histórico
+</button>
+
+
     <div id="historyList" class="space-y-3 max-h-[60vh] overflow-y-auto">
       <!-- itens gerados via JS -->
     </div>
@@ -380,6 +388,41 @@
   </div>
 </div>
 
+<div id="clearHistoryModal"
+  onclick="closeClearHistoryModal()"
+  class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4">
+
+  <div class="bg-card-dark rounded-2xl p-5 w-full max-w-sm space-y-4"
+       onclick="event.stopPropagation()">
+
+    <h3 class="text-lg font-black text-center uppercase tracking-wide">
+      Limpar Histórico
+    </h3>
+
+    <p class="text-sm text-center opacity-70">
+      Tem certeza que deseja apagar todas as partidas salvas?
+      <br>
+      Esta ação não pode ser desfeita.
+    </p>
+
+    <div class="flex gap-3 pt-2">
+      <button onclick="closeClearHistoryModal()"
+        class="flex-1 h-11 rounded-xl border border-white/10
+               uppercase tracking-widest text-xs
+               hover:bg-white/5 transition">
+        Cancelar
+      </button>
+
+      <button onclick="confirmClearHistory()"
+        class="flex-1 h-11 rounded-xl bg-accent-orange
+               text-white font-bold uppercase tracking-widest text-xs
+               active:scale-95 transition-transform">
+        Limpar
+      </button>
+    </div>
+
+  </div>
+</div>
 
   </body>
 </html>

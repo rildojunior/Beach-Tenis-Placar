@@ -377,6 +377,25 @@ function renderHistory() {
   })
 }
 
+function confirmClearHistory() {
+  matchHistory = []
+  localStorage.removeItem('bt-history')
+  renderHistory()
+  closeClearHistoryModal()
+}
+
+function openClearHistoryModal() {
+  const modal = document.getElementById('clearHistoryModal')
+  modal.classList.remove('hidden')
+  modal.classList.add('flex')
+}
+
+function closeClearHistoryModal() {
+  const modal = document.getElementById('clearHistoryModal')
+  modal.classList.add('hidden')
+  modal.classList.remove('flex')
+}
+
 const pointsAEl = document.getElementById('pointsA')
 const pointsBEl = document.getElementById('pointsB')
 const setsAEl = document.getElementById('setsA')
