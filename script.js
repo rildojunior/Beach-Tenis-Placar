@@ -287,11 +287,32 @@ window.addEventListener('beforeinstallprompt', e => {
 })
 
 function showInstallPrompt() {
-  document.getElementById('installPrompt').classList.remove('hidden')
+  if (localStorage.getItem('bt-install-dismissed')) return
+
+  const el = document.getElementById('installPrompt')
+  el.classList.remove('hidden')
+
+  el.classList.add('install-enter')
+  requestAnimationFrame(() => {
+    el.classList.add('install-enter-active')
+    el.classList.remove('install-enter')
+  })
 }
 
 function hideInstallPrompt() {
-  document.getElementById('installPrompt').classList.add('hidden')
+  const el = document.getElementById('installPrompt')
+  if (!el) return
+
+  el.classList.add('install-exit')
+  requestAnimationFrame(() => {
+    el.classList.add('install-exit-active')
+    el.classList.remove('install-exit')
+  })
+
+  setTimeout(() => {
+    el.classList.add('hidden')
+    el.classList.remove('install-exit-active')
+  }, 250)
 }
 
 async function installApp() {
@@ -328,4 +349,10 @@ if (isIOS && !isInStandalone && !localStorage.getItem('bt-install-dismissed')) {
       'No iPhone: compartilhar → Adicionar à Tela de Início'
     showInstallPrompt()
   }
+}
+
+function dismissInstallPrompt() {
+  localStorage.setItem('bt-install-dismissed', '1')
+  hideInstallPrompt()
+  deferredPrompt = null
 }

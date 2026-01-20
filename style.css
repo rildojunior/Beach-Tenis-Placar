@@ -36,3 +36,27 @@ select {
 main {
     padding-bottom: calc(5rem + env(safe-area-inset-bottom));
 }
+
+/* ===== Install Prompt Animation ===== */
+
+.install-enter {
+  opacity: 0;
+  transform: translate(-50%, 30px);
+}
+
+.install-enter-active {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.install-exit {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.install-exit-active {
+  opacity: 0;
+  transform: translate(-50%, 30px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
