@@ -11,6 +11,8 @@ let teamNames = {
   B: 'Time B'
 }
 
+const modalStack = []
+
 const isStandalone =
   window.matchMedia('(display-mode: standalone)').matches ||
   window.navigator.standalone === true
@@ -65,18 +67,12 @@ function saveTeamNames() {
 }
 
 function openSettings() {
-  openModal('settingsModal')
   document.getElementById('teamNameAInput').value = teamNames.A
   document.getElementById('teamNameBInput').value = teamNames.B
-  const modal = document.getElementById('settingsModal')
-  modal.classList.remove('hidden')
-  modal.classList.add('flex')
+  openModal('settingsModal')
 }
 
 function closeSettings() {
-  const modal = document.getElementById('settingsModal')
-  modal.classList.add('hidden')
-  modal.classList.remove('flex')
   closeModal('settingsModal')
 }
 
@@ -221,10 +217,7 @@ document.addEventListener(
 )
 
 function showWinner(teamKey) {
-  openModal('winnerModal')
-  const modal = document.getElementById('winnerModal')
   const nameEl = document.getElementById('winnerName')
-
   const isTeamA = teamKey === 'A'
 
   nameEl.textContent = teamNames[teamKey]
@@ -235,14 +228,10 @@ function showWinner(teamKey) {
   // aplica cor correta só no nome
   nameEl.classList.add(isTeamA ? 'text-primary' : 'text-accent-orange')
 
-  modal.classList.remove('hidden')
-  modal.classList.add('flex')
+  openModal('winnerModal')
 }
 
 function closeWinner() {
-  const modal = document.getElementById('winnerModal')
-  modal.classList.add('hidden')
-  modal.classList.remove('flex')
   closeModal('winnerModal')
 }
 
@@ -328,15 +317,9 @@ function saveMatchToHistory() {
 function openHistory() {
   renderHistory()
   openModal('historyModal')
-  const modal = document.getElementById('historyModal')
-  modal.classList.remove('hidden')
-  modal.classList.add('flex')
 }
 
 function closeHistory() {
-  const modal = document.getElementById('historyModal')
-  modal.classList.add('hidden')
-  modal.classList.remove('flex')
   closeModal('historyModal')
 }
 
@@ -392,20 +375,23 @@ function confirmClearHistory() {
 
 function openClearHistoryModal() {
   openModal('clearHistoryModal')
-  const modal = document.getElementById('clearHistoryModal')
-  modal.classList.remove('hidden')
-  modal.classList.add('flex')
 }
 
 function closeClearHistoryModal() {
-  const modal = document.getElementById('clearHistoryModal')
-  modal.classList.add('hidden')
-  modal.classList.remove('flex')
   closeModal('clearHistoryModal')
 }
 
 function openModal(id) {
   const modal = document.getElementById(id)
+  if (!modal) return
+
+  // evita abrir o mesmo modal duas vezes
+  if (modalStack.includes(id)) return
+
+  modalStack.push(id)
+
+  modal.style.zIndex = 1000 + modalStack.length * 10
+
   modal.classList.remove('hidden')
   modal.classList.add('flex', 'modal-enter')
 
@@ -413,10 +399,18 @@ function openModal(id) {
     modal.classList.add('modal-enter-active')
     modal.classList.remove('modal-enter')
   })
+
+  updateBodyScroll()
 }
 
 function closeModal(id) {
   const modal = document.getElementById(id)
+  if (!modal) return
+
+  // só fecha se for o modal do topo
+  if (modalStack[modalStack.length - 1] !== id) return
+
+  modalStack.pop()
 
   modal.classList.add('modal-exit')
   requestAnimationFrame(() => {
@@ -427,7 +421,18 @@ function closeModal(id) {
   setTimeout(() => {
     modal.classList.add('hidden')
     modal.classList.remove('flex', 'modal-exit-active')
+    modal.style.zIndex = ''
   }, 200)
+
+  updateBodyScroll()
+}
+
+function updateBodyScroll() {
+  if (modalStack.length > 0) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
 }
 
 const pointsAEl = document.getElementById('pointsA')
