@@ -363,6 +363,7 @@ function closeHistory() {
 
 function renderHistory() {
   const list = document.getElementById('historyList')
+  const exportBtn = document.getElementById('exportHistoryBtn')
   list.innerHTML = ''
 
   if (matchHistory.length === 0) {
@@ -371,6 +372,7 @@ function renderHistory() {
         Nenhuma partida registrada
       </p>
     `
+    if (exportBtn) exportBtn.disabled = true
     return
   }
 
@@ -402,6 +404,8 @@ function renderHistory() {
       </div>
     `
   })
+
+  if (exportBtn) exportBtn.disabled = false
 }
 
 function confirmClearHistory() {
@@ -471,6 +475,176 @@ function updateBodyScroll() {
   } else {
     document.body.style.overflow = ''
   }
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = () => reject(new Error(`Falha ao carregar imagem: ${src}`))
+    img.src = src
+  })
+}
+
+async function exportHistoryImage() {
+  if (matchHistory.length === 0) return
+
+  const canvas = document.getElementById('historyCanvas')
+  if (!canvas) return
+
+  const width = 1080
+  const height = 1920
+  canvas.width = width
+  canvas.height = height
+
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, height)
+  gradient.addColorStop(0, '#0f1115')
+  gradient.addColorStop(1, '#1f232a')
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, width, height)
+
+  let logo = null
+  try {
+    logo = await loadImage('icon-192.png')
+  } catch (err) {
+    console.warn(err)
+  }
+
+  const headerCenterX = width / 2
+  const headerTop = 60
+  const logoSize = 84
+
+  if (logo) {
+    ctx.save()
+    drawRoundedRect(
+      ctx,
+      headerCenterX - logoSize / 2,
+      headerTop,
+      logoSize,
+      logoSize,
+      20
+    )
+    ctx.clip()
+    ctx.drawImage(
+      logo,
+      headerCenterX - logoSize / 2,
+      headerTop,
+      logoSize,
+      logoSize
+    )
+    ctx.restore()
+  }
+
+  ctx.fillStyle = '#17cfcf'
+  ctx.font = "700 40px 'Spline Sans', sans-serif"
+  ctx.textAlign = 'center'
+  ctx.fillText('BEACH TENNIS PLACAR', headerCenterX, headerTop + 120)
+
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  ctx.font = "600 24px 'Spline Sans', sans-serif"
+  const exportedAt = new Date().toLocaleString()
+  ctx.fillText(exportedAt, headerCenterX, headerTop + 160)
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)'
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.moveTo(120, headerTop + 200)
+  ctx.lineTo(width - 120, headerTop + 200)
+  ctx.stroke()
+
+  const maxItems = 8
+  const items = matchHistory.slice(0, maxItems)
+  const startY = 320
+  const rowHeight = 190
+  const drawRoundedRect = (ctx, x, y, w, h, r) => {
+    const radius = Math.min(r, w / 2, h / 2)
+    ctx.beginPath()
+    ctx.moveTo(x + radius, y)
+    ctx.arcTo(x + w, y, x + w, y + h, radius)
+    ctx.arcTo(x + w, y + h, x, y + h, radius)
+    ctx.arcTo(x, y + h, x, y, radius)
+    ctx.arcTo(x, y, x + w, y, radius)
+    ctx.closePath()
+  }
+
+  items.forEach((match, index) => {
+    const y = startY + index * rowHeight
+    const isTeamA = match.winner === 'A'
+    const winnerName = isTeamA ? match.teamA : match.teamB
+    const vsLine = `${match.teamA} x ${match.teamB}`
+    const scoreLine = `${match.setsA} x ${match.setsB}`
+    const dateLine = new Date(match.date).toLocaleString()
+
+    const cardHeight = 150
+    const cardTop = y - cardHeight / 2
+    const line1Height = 44
+    const line2Height = 34
+    const line3Height = 28
+    const blockHeight = line1Height + line2Height + line3Height
+    const blockTop = cardTop + (cardHeight - blockHeight) / 2
+
+    ctx.fillStyle = 'rgba(255,255,255,0.04)'
+    drawRoundedRect(ctx, 120, cardTop, width - 240, cardHeight, 22)
+    ctx.fill()
+
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'top'
+    ctx.font = "700 36px 'Spline Sans', sans-serif"
+    ctx.fillStyle = isTeamA ? '#17cfcf' : '#FC5D24'
+    ctx.fillText(`🏆 ${winnerName}`, 160, blockTop)
+
+    ctx.textAlign = 'right'
+    ctx.font = "800 36px 'Spline Sans', sans-serif"
+    ctx.fillStyle = 'rgba(255,255,255,0.85)'
+    ctx.fillText(scoreLine, width - 160, blockTop)
+
+    ctx.textAlign = 'left'
+    ctx.font = "500 26px 'Spline Sans', sans-serif"
+    ctx.fillStyle = 'rgba(255,255,255,0.55)'
+    ctx.fillText(vsLine, 160, blockTop + line1Height)
+
+    ctx.font = "500 22px 'Spline Sans', sans-serif"
+    ctx.fillStyle = 'rgba(255,255,255,0.35)'
+    ctx.fillText(dateLine, 160, blockTop + line1Height + line2Height)
+  })
+
+  ctx.textAlign = 'center'
+  ctx.font = "600 22px 'Spline Sans', sans-serif"
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.fillText('Compartilhe seu histórico nas redes', width / 2, height - 80)
+
+  canvas.toBlob(async blob => {
+    if (!blob) return
+
+    const file = new File([blob], 'historico-beach-tennis.png', {
+      type: 'image/png'
+    })
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: 'Historico de Partidas',
+          text: 'Meu historico de partidas no Beach Tennis Placar.'
+        })
+        return
+      } catch (err) {
+        console.error('Compartilhamento cancelado:', err)
+      }
+    }
+
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'historico-beach-tennis.png'
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }, 'image/png')
 }
 
 const pointsAEl = document.getElementById('pointsA')

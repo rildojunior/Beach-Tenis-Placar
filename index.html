@@ -39,15 +39,15 @@
 
     <link rel="stylesheet" href="style.css" />
 
-    <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#16181d">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#16181d" />
 
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
 
     <title>Beach Tennis</title>
   </head>
@@ -55,33 +55,33 @@
   <body
     class="bg-background-dark font-display text-white min-h-screen flex flex-col"
   >
-<header class="p-4 max-w-md mx-auto w-full grid grid-cols-4 items-center">
-  
-  <!-- Histórico -->
-  <div class="flex justify-start">
-    <button onclick="openHistory()"
-      class="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition">
-      <span class="material-symbols-outlined text-xl">history</span>
-    </button>
-  </div>
+    <header class="p-4 max-w-md mx-auto w-full grid grid-cols-4 items-center">
+      <!-- Histórico -->
+      <div class="flex justify-start">
+        <button
+          onclick="openHistory()"
+          class="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition"
+        >
+          <span class="material-symbols-outlined text-xl">history</span>
+        </button>
+      </div>
 
-  <!-- Título (ocupa 2 colunas) -->
-  <div class="col-span-2 text-center">
-    <h1 class="font-black uppercase tracking-tight">Beach Tennis Placar</h1>
-    <span class="text-primary text-xs tracking-widest">PLACAR</span>
-  </div>
+      <!-- Título (ocupa 2 colunas) -->
+      <div class="col-span-2 text-center">
+        <h1 class="font-black uppercase tracking-tight">Beach Tennis Placar</h1>
+        <span class="text-primary text-xs tracking-widest">PLACAR</span>
+      </div>
 
-  <!-- Configurações -->
-  <div class="flex justify-end">
-    <button onclick="openSettings()"
-      class="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition">
-      <span class="material-symbols-outlined text-xl">settings</span>
-    </button>
-  </div>
-
-</header>
-
-
+      <!-- Configurações -->
+      <div class="flex justify-end">
+        <button
+          onclick="openSettings()"
+          class="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition"
+        >
+          <span class="material-symbols-outlined text-xl">settings</span>
+        </button>
+      </div>
+    </header>
 
     <main class="flex-1 max-w-md mx-auto w-full">
       <section class="px-6 py-4">
@@ -95,22 +95,18 @@
           <div class="flex items-center justify-center gap-8">
             <div class="text-center">
               <div id="setsA" class="text-4xl font-black">0</div>
-              <span id="teamNameASet"
-  class="text-[10px] opacity-50 uppercase">
-  Time A
-</span>
-
+              <span id="teamNameASet" class="text-[10px] opacity-50 uppercase">
+                Time A
+              </span>
             </div>
 
             <div class="h-10 w-px bg-white/10 rounded-full"></div>
 
             <div class="text-center">
               <div id="setsB" class="text-4xl font-black">0</div>
-              <span id="teamNameBSet"
-  class="text-[10px] opacity-50 uppercase">
-  Time B
-</span>
-
+              <span id="teamNameBSet" class="text-[10px] opacity-50 uppercase">
+                Time B
+              </span>
             </div>
           </div>
         </div>
@@ -128,12 +124,14 @@
             id="cardA"
             class="flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 border-primary transition-all"
           >
-            <span id="teamNameA"
-  contenteditable="true"
-  spellcheck="false"
-  class="text-primary text-xs uppercase font-bold focus:outline-none">
-  Time A
-</span>
+            <span
+              id="teamNameA"
+              contenteditable="true"
+              spellcheck="false"
+              class="text-primary text-xs uppercase font-bold focus:outline-none"
+            >
+              Time A
+            </span>
             <div class="flex-1 flex items-center justify-center">
               <span id="pointsA" class="text-7xl font-black">0</span>
             </div>
@@ -149,12 +147,14 @@
             id="cardB"
             class="flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 border-accent-orange transition-all"
           >
-          <span id="teamNameB"
-  contenteditable="true"
-  spellcheck="false"
-  class="text-accent-orange text-xs uppercase font-bold focus:outline-none">
-  Time B
-</span>
+            <span
+              id="teamNameB"
+              contenteditable="true"
+              spellcheck="false"
+              class="text-accent-orange text-xs uppercase font-bold focus:outline-none"
+            >
+              Time B
+            </span>
 
             <div class="flex-1 flex items-center justify-center">
               <span id="pointsB" class="text-7xl font-black">0</span>
@@ -222,50 +222,47 @@
       onclick="closeSettings()"
       class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 px-4"
     >
-      <div class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4 modal-content" onclick="event.stopPropagation()">
-<div class="relative">
-  <h2 class="text-lg font-black text-center uppercase tracking-wide">
-    Configurações
-  </h2>
+      <div
+        class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4 modal-content"
+        onclick="event.stopPropagation()"
+      >
+        <div class="relative">
+          <h2 class="text-lg font-black text-center uppercase tracking-wide">
+            Configurações
+          </h2>
 
-  <button
-    onclick="closeModal('settingsModal')"
-    aria-label="Fechar configurações"
-    class="absolute right-0 top-1/2 -translate-y-1/2
-           p-2 rounded-xl hover:bg-white/10 transition">
-    <span class="material-symbols-outlined text-xl">close</span>
-  </button>
-</div>
-
+          <button
+            onclick="closeModal('settingsModal')"
+            aria-label="Fechar configurações"
+            class="absolute right-0 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-white/10 transition"
+          >
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
 
         <div class="mt-4 space-y-3">
-  <p class="text-xs uppercase opacity-60">
-    Nomes dos Times
-  </p>
+          <p class="text-xs uppercase opacity-60">Nomes dos Times</p>
 
-  <div>
-    <label class="text-[10px] uppercase opacity-50">
-      Time A
-    </label>
-    <input id="teamNameAInput"
-      type="text"
-      placeholder="Time A"
-      class="w-full mt-1 bg-card-dark text-white rounded-xl p-3
-             border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary">
-  </div>
+          <div>
+            <label class="text-[10px] uppercase opacity-50"> Time A </label>
+            <input
+              id="teamNameAInput"
+              type="text"
+              placeholder="Time A"
+              class="w-full mt-1 bg-card-dark text-white rounded-xl p-3 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
 
-  <div>
-    <label class="text-[10px] uppercase opacity-50">
-      Time B
-    </label>
-    <input id="teamNameBInput"
-      type="text"
-      placeholder="Time B"
-      class="w-full mt-1 bg-card-dark text-white rounded-xl p-3
-             border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary">
-  </div>
-</div>
-
+          <div>
+            <label class="text-[10px] uppercase opacity-50"> Time B </label>
+            <input
+              id="teamNameBInput"
+              type="text"
+              placeholder="Time B"
+              class="w-full mt-1 bg-card-dark text-white rounded-xl p-3 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+        </div>
 
         <!-- Tipo de pontuação -->
         <div>
@@ -278,31 +275,33 @@
             <option value="simplified">Simplificada (1,2,3)</option>
           </select>
         </div>
-<div class="flex items-center justify-between">
-  <label class="text-xs uppercase opacity-60">
-    Sets para Vencer
-  </label>
-  <button id="toggleSets"
-    onclick="toggleSetsEnabled()"
-    class="w-12 h-6 rounded-full bg-white/10 relative transition-colors">
-    <span id="toggleCircle"
-      class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform">
-    </span>
-  </button>
-</div>
+        <div class="flex items-center justify-between">
+          <label class="text-xs uppercase opacity-60"> Sets para Vencer </label>
+          <button
+            id="toggleSets"
+            onclick="toggleSetsEnabled()"
+            class="w-12 h-6 rounded-full bg-white/10 relative transition-colors"
+          >
+            <span
+              id="toggleCircle"
+              class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform"
+            >
+            </span>
+          </button>
+        </div>
 
         <!-- Sets para vencer -->
         <div>
-<div id="setsInputWrapper" class="mt-3 hidden">
-  <input id="setsToWin"
-    type="number"
-    min="1"
-    step="1"
-    placeholder="Ex: 3"
-    class="w-full mt-1 bg-card-dark text-white rounded-xl p-3
-           border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary">
-</div>
-
+          <div id="setsInputWrapper" class="mt-3 hidden">
+            <input
+              id="setsToWin"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="Ex: 3"
+              class="w-full mt-1 bg-card-dark text-white rounded-xl p-3 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
         </div>
 
         <button
@@ -319,18 +318,16 @@
       onclick="closeWinner()"
       class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4"
     >
-      <div class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4"
-      onclick="event.stopPropagation()"">
-        <h2 class="text-xl font-black text-center">
-  🏆 FIM DE PARTIDA 🏆
-</h2>
+      <div
+        class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4"
+        onclick="event.stopPropagation()"
+      >
+        <h2 class="text-xl font-black text-center">🏆 FIM DE PARTIDA 🏆</h2>
 
         <p class="text-lg font-bold text-center">
-  <span id="winnerName"></span>
-  <span class="text-white"> venceu a partida</span>
-</p>
-
-
+          <span id="winnerName"></span>
+          <span class="text-white"> venceu a partida</span>
+        </p>
 
         <button
           onclick="
@@ -345,137 +342,147 @@
     </div>
 
     <div
-  id="tieModal"
-  onclick="closeTieModal()"
-  class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4"
->
-  <div
-    class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4 modal-content"
-    onclick="event.stopPropagation()"
-  >
-    <h2 class="text-lg font-black text-center uppercase tracking-wide">
-      Partida Empatada
-    </h2>
-
-    <p class="text-sm text-center opacity-70 leading-relaxed">
-      A partida está empatada em sets.
-      <br />
-      É necessário realizar o desempate antes de finalizar.
-    </p>
-
-    <button
+      id="tieModal"
       onclick="closeTieModal()"
-      class="w-full h-12 bg-primary text-background-dark rounded-xl font-black uppercase tracking-widest active:scale-95 transition-transform"
+      class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4"
     >
-      Continuar Partida
-    </button>
-  </div>
-</div>
+      <div
+        class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4 modal-content"
+        onclick="event.stopPropagation()"
+      >
+        <h2 class="text-lg font-black text-center uppercase tracking-wide">
+          Partida Empatada
+        </h2>
 
+        <p class="text-sm text-center opacity-70 leading-relaxed">
+          A partida está empatada em sets.
+          <br />
+          É necessário realizar o desempate antes de finalizar.
+        </p>
+
+        <button
+          onclick="closeTieModal()"
+          class="w-full h-12 bg-primary text-background-dark rounded-xl font-black uppercase tracking-widest active:scale-95 transition-transform"
+        >
+          Continuar Partida
+        </button>
+      </div>
+    </div>
 
     <script src="script.js"></script>
 
-    <div id="installPrompt"
-  class="fixed bottom-24 left-1/2 -translate-x-1/2 hidden z-50
-         bg-card-dark text-white px-5 py-4 rounded-2xl shadow-xl
-         flex items-center gap-4 max-w-sm w-[90%]">
+    <div
+      id="installPrompt"
+      class="fixed bottom-24 left-1/2 -translate-x-1/2 hidden z-50 bg-card-dark text-white px-5 py-4 rounded-2xl shadow-xl flex items-center gap-4 max-w-sm w-[90%]"
+    >
+      <span class="material-symbols-outlined text-3xl text-primary">
+        download
+      </span>
 
-  <span class="material-symbols-outlined text-3xl text-primary">
-    download
-  </span>
+      <div class="flex-1">
+        <p class="font-bold text-sm">Instalar App</p>
+        <p class="text-xs opacity-70">Adicione o placar à tela inicial</p>
+      </div>
 
-  <div class="flex-1">
-    <p class="font-bold text-sm">Instalar App</p>
-    <p class="text-xs opacity-70">
-      Adicione o placar à tela inicial
-    </p>
-  </div>
+      <div class="flex flex-col gap-2 items-end">
+        <button
+          onclick="installApp()"
+          class="bg-primary text-background-dark px-4 py-2 rounded-xl font-bold"
+        >
+          Instalar
+        </button>
 
-<div class="flex flex-col gap-2 items-end">
-  <button onclick="installApp()"
-    class="bg-primary text-background-dark px-4 py-2 rounded-xl font-bold">
-    Instalar
-  </button>
-
-  <button onclick="dismissInstallPrompt()"
-    class="text-[10px] uppercase tracking-widest opacity-50 hover:opacity-80">
-    Não mostrar novamente
-  </button>
-</div>
-</div>
-
-<div id="historyModal"
-  onclick="closeHistory()"
-  class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4">
-
-  <div class="bg-card-dark rounded-2xl p-5 w-full max-w-sm space-y-4 modal-content"
-       onclick="event.stopPropagation()">
-
-<div class="relative">
-  <h2 class="text-lg font-black text-center uppercase tracking-wide">
-    Histórico de Partidas
-  </h2>
-
-  <button
-    onclick="closeModal('historyModal')"
-    aria-label="Fechar histórico"
-    class="absolute right-0 top-1/2 -translate-y-1/2
-           p-2 rounded-xl hover:bg-white/10 transition">
-    <span class="material-symbols-outlined text-xl">close</span>
-  </button>
-</div>
-
-
-    <button onclick="openClearHistoryModal()"
-  class="w-full h-10 rounded-xl border border-white/10
-         text-xs uppercase tracking-widest opacity-60
-         hover:opacity-90 hover:bg-white/5 transition">
-  Limpar histórico
-</button>
-
-
-    <div id="historyList" class="space-y-3 max-h-[60vh] overflow-y-auto">
-      <!-- itens gerados via JS -->
+        <button
+          onclick="dismissInstallPrompt()"
+          class="text-[10px] uppercase tracking-widest opacity-50 hover:opacity-80"
+        >
+          Não mostrar novamente
+        </button>
+      </div>
     </div>
 
-  </div>
-</div>
+    <div
+      id="historyModal"
+      onclick="closeHistory()"
+      class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4"
+    >
+      <div
+        class="bg-card-dark rounded-2xl p-5 w-full max-w-sm space-y-4 modal-content"
+        onclick="event.stopPropagation()"
+      >
+        <div class="relative">
+          <h2 class="text-lg font-black text-center uppercase tracking-wide">
+            Histórico de Partidas
+          </h2>
 
-<div id="clearHistoryModal"
-  onclick="closeClearHistoryModal()"
-  class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4">
+          <button
+            onclick="closeModal('historyModal')"
+            aria-label="Fechar histórico"
+            class="absolute right-0 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-white/10 transition"
+          >
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
 
-  <div class="bg-card-dark rounded-2xl p-5 w-full max-w-sm space-y-4"
-       onclick="event.stopPropagation()">
+        <button
+          onclick="openClearHistoryModal()"
+          class="w-full h-10 rounded-xl border border-white/10 text-xs uppercase tracking-widest opacity-60 hover:opacity-90 hover:bg-white/5 transition"
+        >
+          Limpar histórico
+        </button>
 
-    <h3 class="text-lg font-black text-center uppercase tracking-wide">
-      Limpar Histórico
-    </h3>
+        <button
+          id="exportHistoryBtn"
+          onclick="exportHistoryImage()"
+          class="w-full h-10 rounded-xl bg-primary text-background-dark text-xs uppercase tracking-widest font-bold disabled:opacity-40 disabled:cursor-not-allowed transition"
+          disabled
+        >
+          Compartilhar histórico
+        </button>
 
-    <p class="text-sm text-center opacity-70">
-      Tem certeza que deseja apagar todas as partidas salvas?
-      <br>
-      Esta ação não pode ser desfeita.
-    </p>
-
-    <div class="flex gap-3 pt-2">
-      <button onclick="closeClearHistoryModal()"
-        class="flex-1 h-11 rounded-xl border border-white/10
-               uppercase tracking-widest text-xs
-               hover:bg-white/5 transition">
-        Cancelar
-      </button>
-
-      <button onclick="confirmClearHistory()"
-        class="flex-1 h-11 rounded-xl bg-accent-orange
-               text-white font-bold uppercase tracking-widest text-xs
-               active:scale-95 transition-transform">
-        Limpar
-      </button>
+        <div id="historyList" class="space-y-3 max-h-[60vh] overflow-y-auto">
+          <!-- itens gerados via JS -->
+        </div>
+      </div>
     </div>
 
-  </div>
-</div>
+    <div
+      id="clearHistoryModal"
+      onclick="closeClearHistoryModal()"
+      class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4"
+    >
+      <div
+        class="bg-card-dark rounded-2xl p-5 w-full max-w-sm space-y-4"
+        onclick="event.stopPropagation()"
+      >
+        <h3 class="text-lg font-black text-center uppercase tracking-wide">
+          Limpar Histórico
+        </h3>
 
+        <p class="text-sm text-center opacity-70">
+          Tem certeza que deseja apagar todas as partidas salvas?
+          <br />
+          Esta ação não pode ser desfeita.
+        </p>
+
+        <div class="flex gap-3 pt-2">
+          <button
+            onclick="closeClearHistoryModal()"
+            class="flex-1 h-11 rounded-xl border border-white/10 uppercase tracking-widest text-xs hover:bg-white/5 transition"
+          >
+            Cancelar
+          </button>
+
+          <button
+            onclick="confirmClearHistory()"
+            class="flex-1 h-11 rounded-xl bg-accent-orange text-white font-bold uppercase tracking-widest text-xs active:scale-95 transition-transform"
+          >
+            Limpar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <canvas id="historyCanvas" class="hidden"></canvas>
   </body>
 </html>
