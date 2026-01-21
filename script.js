@@ -506,6 +506,21 @@ async function exportHistoryImage() {
   ctx.fillStyle = gradient
   ctx.fillRect(0, 0, width, height)
 
+  const maxItems = 8
+  const items = matchHistory.slice(0, maxItems)
+  const startY = 360
+  const rowHeight = 190
+  const drawRoundedRect = (ctx, x, y, w, h, r) => {
+    const radius = Math.min(r, w / 2, h / 2)
+    ctx.beginPath()
+    ctx.moveTo(x + radius, y)
+    ctx.arcTo(x + w, y, x + w, y + h, radius)
+    ctx.arcTo(x + w, y + h, x, y + h, radius)
+    ctx.arcTo(x, y + h, x, y, radius)
+    ctx.arcTo(x, y, x + w, y, radius)
+    ctx.closePath()
+  }
+
   let logo = null
   try {
     logo = await loadImage('icon-192.png')
@@ -554,21 +569,6 @@ async function exportHistoryImage() {
   ctx.moveTo(120, headerTop + 200)
   ctx.lineTo(width - 120, headerTop + 200)
   ctx.stroke()
-
-  const maxItems = 8
-  const items = matchHistory.slice(0, maxItems)
-  const startY = 320
-  const rowHeight = 190
-  const drawRoundedRect = (ctx, x, y, w, h, r) => {
-    const radius = Math.min(r, w / 2, h / 2)
-    ctx.beginPath()
-    ctx.moveTo(x + radius, y)
-    ctx.arcTo(x + w, y, x + w, y + h, radius)
-    ctx.arcTo(x + w, y + h, x, y + h, radius)
-    ctx.arcTo(x, y + h, x, y, radius)
-    ctx.arcTo(x, y, x + w, y, radius)
-    ctx.closePath()
-  }
 
   items.forEach((match, index) => {
     const y = startY + index * rowHeight
