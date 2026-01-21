@@ -614,7 +614,7 @@ async function exportHistoryImage() {
   ctx.textAlign = 'center'
   ctx.font = "600 22px 'Spline Sans', sans-serif"
   ctx.fillStyle = 'rgba(255,255,255,0.4)'
-  ctx.fillText('Compartilhe seu histórico nas redes', width / 2, height - 80)
+  ctx.fillText('Histórico das últimas 8 partidas', width / 2, height - 80)
 
   canvas.toBlob(async blob => {
     if (!blob) return
@@ -627,8 +627,8 @@ async function exportHistoryImage() {
       try {
         await navigator.share({
           files: [file],
-          title: 'Historico de Partidas',
-          text: 'Meu historico de partidas no Beach Tennis Placar.'
+          title: 'Histórico de Partidas',
+          text: 'Últimas 8 partidas no Beach Tennis Placar.'
         })
         return
       } catch (err) {
