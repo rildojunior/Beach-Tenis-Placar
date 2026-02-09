@@ -37,7 +37,87 @@
       }
     </script>
 
-    <link rel="stylesheet" href="style.css" />
+    <style type="text/tailwindcss">
+      @layer components {
+        .app-header {
+          @apply p-4 max-w-md mx-auto w-full grid grid-cols-4 items-center;
+        }
+        .icon-button {
+          @apply p-2 rounded-xl bg-white/5 hover:bg-white/10 transition;
+        }
+        .main-shell {
+          @apply flex-1 max-w-md mx-auto w-full;
+        }
+        .section-title {
+          @apply text-center text-xs tracking-[0.3em] opacity-40 uppercase mb-4;
+        }
+        .sets-panel {
+          @apply bg-card-dark/60 rounded-2xl p-4 text-center;
+        }
+        .score-card {
+          @apply flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 transition-all;
+        }
+        .team-name-label {
+          @apply text-xs uppercase font-bold focus:outline-none;
+        }
+        .progress-dot {
+          @apply h-1.5 w-6 rounded-full bg-white/10;
+        }
+        .point-action {
+          @apply w-full aspect-square flex items-center justify-center rounded-3xl shadow-lg active:scale-95 transition-transform;
+        }
+        .subtle-action {
+          @apply w-full py-3 flex items-center justify-center bg-white/5 rounded-xl text-white/40 active:bg-white/10 transition-colors;
+        }
+        .finish-button {
+          @apply w-full h-16 bg-white text-background-dark rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-transform;
+        }
+        .modal-overlay {
+          @apply fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4;
+        }
+        .modal-card {
+          @apply bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4;
+        }
+        .modal-title {
+          @apply text-lg font-black text-center uppercase tracking-wide;
+        }
+        .modal-close-button {
+          @apply absolute right-0 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-white/10 transition;
+        }
+        .form-control {
+          @apply w-full mt-1 bg-card-dark text-white rounded-xl p-3 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary;
+        }
+        .modal-primary-btn {
+          @apply w-full h-12 bg-primary text-background-dark rounded-xl font-black;
+        }
+        .modal-secondary-btn {
+          @apply w-full h-10 rounded-xl border border-white/10 text-xs uppercase tracking-widest opacity-60 hover:opacity-90 hover:bg-white/5 transition;
+        }
+        .modal-share-btn {
+          @apply w-full h-10 rounded-xl bg-primary text-background-dark text-xs uppercase tracking-widest font-bold disabled:opacity-40 disabled:cursor-not-allowed transition;
+        }
+        .inline-modal-btn {
+          @apply flex-1 h-11 rounded-xl uppercase tracking-widest text-xs transition;
+        }
+        .inline-modal-btn--ghost {
+          @apply border border-white/10 hover:bg-white/5;
+        }
+        .inline-modal-btn--danger {
+          @apply bg-accent-orange text-white font-bold active:scale-95 transition-transform;
+        }
+        .install-prompt {
+          @apply fixed bottom-24 left-1/2 -translate-x-1/2 hidden z-50 bg-card-dark text-white px-5 py-4 rounded-2xl shadow-xl flex items-center gap-4 max-w-sm w-[90%];
+        }
+        .install-primary-btn {
+          @apply bg-primary text-background-dark px-4 py-2 rounded-xl font-bold;
+        }
+        .install-dismiss-btn {
+          @apply text-[10px] uppercase tracking-widest opacity-50 hover:opacity-80;
+        }
+      }
+    </style>
+
+    <link rel="stylesheet" href="assets/css/style.css" />
 
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#16181d" />
@@ -55,12 +135,12 @@
   <body
     class="bg-background-dark font-display text-white min-h-screen flex flex-col"
   >
-    <header class="p-4 max-w-md mx-auto w-full grid grid-cols-4 items-center">
+    <header class="app-header">
       <!-- Histórico -->
       <div class="flex justify-start">
         <button
           onclick="openHistory()"
-          class="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition"
+          class="icon-button"
         >
           <span class="material-symbols-outlined text-xl">history</span>
         </button>
@@ -76,16 +156,16 @@
       <div class="flex justify-end">
         <button
           onclick="openSettings()"
-          class="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition"
+          class="icon-button"
         >
           <span class="material-symbols-outlined text-xl">settings</span>
         </button>
       </div>
     </header>
 
-    <main class="flex-1 max-w-md mx-auto w-full">
+    <main class="main-shell">
       <section class="px-6 py-4">
-        <div class="bg-card-dark/60 rounded-2xl p-4 text-center">
+        <div class="sets-panel">
           <h3
             class="text-primary text-xs font-bold tracking-[0.3em] uppercase mb-3"
           >
@@ -113,22 +193,20 @@
       </section>
 
       <section class="px-4 py-2">
-        <h4
-          class="text-center text-xs tracking-[0.3em] opacity-40 uppercase mb-4"
-        >
+        <h4 class="section-title">
           Pontuação da Partida
         </h4>
 
         <div class="flex gap-3">
           <div
             id="cardA"
-            class="flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 border-primary transition-all"
+            class="score-card border-primary"
           >
             <span
               id="teamNameA"
               contenteditable="true"
               spellcheck="false"
-              class="text-primary text-xs uppercase font-bold focus:outline-none"
+              class="team-name-label text-primary"
             >
               Time A
             </span>
@@ -136,22 +214,22 @@
               <span id="pointsA" class="text-7xl font-black">0</span>
             </div>
             <div class="flex gap-1 mt-2">
-              <div class="progressA h-1.5 w-6 rounded-full bg-white/10"></div>
-              <div class="progressA h-1.5 w-6 rounded-full bg-white/10"></div>
-              <div class="progressA h-1.5 w-6 rounded-full bg-white/10"></div>
-              <div class="progressA h-1.5 w-6 rounded-full bg-white/10"></div>
+              <div class="progressA progress-dot"></div>
+              <div class="progressA progress-dot"></div>
+              <div class="progressA progress-dot"></div>
+              <div class="progressA progress-dot"></div>
             </div>
           </div>
 
           <div
             id="cardB"
-            class="flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 border-accent-orange transition-all"
+            class="score-card border-accent-orange"
           >
             <span
               id="teamNameB"
               contenteditable="true"
               spellcheck="false"
-              class="text-accent-orange text-xs uppercase font-bold focus:outline-none"
+              class="team-name-label text-accent-orange"
             >
               Time B
             </span>
@@ -160,10 +238,10 @@
               <span id="pointsB" class="text-7xl font-black">0</span>
             </div>
             <div class="flex gap-1 mt-2">
-              <div class="progressB h-1.5 w-6 rounded-full bg-white/10"></div>
-              <div class="progressB h-1.5 w-6 rounded-full bg-white/10"></div>
-              <div class="progressB h-1.5 w-6 rounded-full bg-white/10"></div>
-              <div class="progressB h-1.5 w-6 rounded-full bg-white/10"></div>
+              <div class="progressB progress-dot"></div>
+              <div class="progressB progress-dot"></div>
+              <div class="progressB progress-dot"></div>
+              <div class="progressB progress-dot"></div>
             </div>
           </div>
         </div>
@@ -174,7 +252,7 @@
           <div class="flex flex-col gap-3">
             <button
               onclick="addPoint('A')"
-              class="w-full aspect-square flex items-center justify-center bg-primary rounded-3xl text-background-dark shadow-lg shadow-primary/20 active:scale-95 transition-transform"
+              class="point-action bg-primary text-background-dark shadow-primary/20"
             >
               <span class="material-symbols-outlined text-5xl font-bold"
                 >add</span
@@ -182,7 +260,7 @@
             </button>
             <button
               onclick="removePoint('A')"
-              class="w-full py-3 flex items-center justify-center bg-white/5 rounded-xl text-white/40 active:bg-white/10 transition-colors"
+              class="subtle-action"
             >
               <span class="material-symbols-outlined">remove</span>
             </button>
@@ -191,7 +269,7 @@
           <div class="flex flex-col gap-3">
             <button
               onclick="addPoint('B')"
-              class="w-full aspect-square flex items-center justify-center bg-accent-orange rounded-3xl text-white shadow-lg shadow-accent-orange/20 active:scale-95 transition-transform"
+              class="point-action bg-accent-orange text-white shadow-accent-orange/20"
             >
               <span class="material-symbols-outlined text-5xl font-bold"
                 >add</span
@@ -199,7 +277,7 @@
             </button>
             <button
               onclick="removePoint('B')"
-              class="w-full py-3 flex items-center justify-center bg-white/5 rounded-xl text-white/40 active:bg-white/10 transition-colors"
+              class="subtle-action"
             >
               <span class="material-symbols-outlined">remove</span>
             </button>
@@ -210,7 +288,7 @@
       <footer class="px-4 pb-6">
         <button
           onclick="finishMatch()"
-          class="w-full h-16 bg-white text-background-dark rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-transform"
+          class="finish-button"
         >
           Finalizar Partida
         </button>
@@ -220,21 +298,19 @@
     <div
       id="settingsModal"
       onclick="closeSettings()"
-      class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 px-4"
+      class="modal-overlay bg-black/60"
     >
       <div
-        class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4 modal-content"
+        class="modal-card modal-content"
         onclick="event.stopPropagation()"
       >
         <div class="relative">
-          <h2 class="text-lg font-black text-center uppercase tracking-wide">
-            Configurações
-          </h2>
+          <h2 class="modal-title">Configurações</h2>
 
           <button
             onclick="closeModal('settingsModal')"
             aria-label="Fechar configurações"
-            class="absolute right-0 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-white/10 transition"
+            class="modal-close-button"
           >
             <span class="material-symbols-outlined text-xl">close</span>
           </button>
@@ -249,7 +325,7 @@
               id="teamNameAInput"
               type="text"
               placeholder="Time A"
-              class="w-full mt-1 bg-card-dark text-white rounded-xl p-3 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary"
+              class="form-control"
             />
           </div>
 
@@ -259,7 +335,7 @@
               id="teamNameBInput"
               type="text"
               placeholder="Time B"
-              class="w-full mt-1 bg-card-dark text-white rounded-xl p-3 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary"
+              class="form-control"
             />
           </div>
         </div>
@@ -269,7 +345,7 @@
           <label class="text-xs uppercase opacity-60">Pontuação</label>
           <select
             id="scoringMode"
-            class="w-full mt-1 bg-card-dark text-white rounded-xl p-3 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary"
+            class="form-control"
           >
             <option value="official">Oficial (15,30,40)</option>
             <option value="simplified">Simplificada (1,2,3)</option>
@@ -299,14 +375,14 @@
               min="1"
               step="1"
               placeholder="Ex: 3"
-              class="w-full mt-1 bg-card-dark text-white rounded-xl p-3 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary"
+              class="form-control"
             />
           </div>
         </div>
 
         <button
           onclick="applySettings()"
-          class="w-full h-12 bg-primary text-background-dark rounded-xl font-black"
+          class="modal-primary-btn"
         >
           Salvar
         </button>
@@ -316,10 +392,10 @@
     <div
       id="winnerModal"
       onclick="closeWinner()"
-      class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4"
+      class="modal-overlay"
     >
       <div
-        class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4"
+        class="modal-card modal-content"
         onclick="event.stopPropagation()"
       >
         <h2 class="text-xl font-black text-center">🏆 FIM DE PARTIDA 🏆</h2>
@@ -334,7 +410,7 @@
             resetGame()
             closeWinner()
           "
-          class="w-full h-12 bg-primary text-background-dark rounded-xl font-black"
+          class="modal-primary-btn"
         >
           Nova Partida
         </button>
@@ -344,15 +420,13 @@
     <div
       id="tieModal"
       onclick="closeTieModal()"
-      class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4"
+      class="modal-overlay"
     >
       <div
-        class="bg-card-dark rounded-2xl p-6 w-full max-w-sm space-y-4 modal-content"
+        class="modal-card modal-content"
         onclick="event.stopPropagation()"
       >
-        <h2 class="text-lg font-black text-center uppercase tracking-wide">
-          Partida Empatada
-        </h2>
+        <h2 class="modal-title">Partida Empatada</h2>
 
         <p class="text-sm text-center opacity-70 leading-relaxed">
           A partida está empatada em sets.
@@ -362,18 +436,18 @@
 
         <button
           onclick="closeTieModal()"
-          class="w-full h-12 bg-primary text-background-dark rounded-xl font-black uppercase tracking-widest active:scale-95 transition-transform"
+          class="modal-primary-btn uppercase tracking-widest active:scale-95 transition-transform"
         >
           Continuar Partida
         </button>
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="assets/js/app.js"></script>
 
     <div
       id="installPrompt"
-      class="fixed bottom-24 left-1/2 -translate-x-1/2 hidden z-50 bg-card-dark text-white px-5 py-4 rounded-2xl shadow-xl flex items-center gap-4 max-w-sm w-[90%]"
+      class="install-prompt"
     >
       <span class="material-symbols-outlined text-3xl text-primary">
         download
@@ -387,14 +461,14 @@
       <div class="flex flex-col gap-2 items-end">
         <button
           onclick="installApp()"
-          class="bg-primary text-background-dark px-4 py-2 rounded-xl font-bold"
+          class="install-primary-btn"
         >
           Instalar
         </button>
 
         <button
           onclick="dismissInstallPrompt()"
-          class="text-[10px] uppercase tracking-widest opacity-50 hover:opacity-80"
+          class="install-dismiss-btn"
         >
           Não mostrar novamente
         </button>
@@ -404,21 +478,19 @@
     <div
       id="historyModal"
       onclick="closeHistory()"
-      class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4"
+      class="modal-overlay"
     >
       <div
-        class="bg-card-dark rounded-2xl p-5 w-full max-w-sm space-y-4 modal-content"
+        class="modal-card modal-content p-5"
         onclick="event.stopPropagation()"
       >
         <div class="relative">
-          <h2 class="text-lg font-black text-center uppercase tracking-wide">
-            Histórico de Partidas
-          </h2>
+          <h2 class="modal-title">Histórico de Partidas</h2>
 
           <button
             onclick="closeModal('historyModal')"
             aria-label="Fechar histórico"
-            class="absolute right-0 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-white/10 transition"
+            class="modal-close-button"
           >
             <span class="material-symbols-outlined text-xl">close</span>
           </button>
@@ -426,7 +498,7 @@
 
         <button
           onclick="openClearHistoryModal()"
-          class="w-full h-10 rounded-xl border border-white/10 text-xs uppercase tracking-widest opacity-60 hover:opacity-90 hover:bg-white/5 transition"
+          class="modal-secondary-btn"
         >
           Limpar histórico
         </button>
@@ -434,7 +506,7 @@
         <button
           id="exportHistoryBtn"
           onclick="exportHistoryImage()"
-          class="w-full h-10 rounded-xl bg-primary text-background-dark text-xs uppercase tracking-widest font-bold disabled:opacity-40 disabled:cursor-not-allowed transition"
+          class="modal-share-btn"
           disabled
         >
           Compartilhar histórico
@@ -449,15 +521,13 @@
     <div
       id="clearHistoryModal"
       onclick="closeClearHistoryModal()"
-      class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50 px-4"
+      class="modal-overlay"
     >
       <div
-        class="bg-card-dark rounded-2xl p-5 w-full max-w-sm space-y-4"
+        class="modal-card modal-content p-5"
         onclick="event.stopPropagation()"
       >
-        <h3 class="text-lg font-black text-center uppercase tracking-wide">
-          Limpar Histórico
-        </h3>
+        <h3 class="modal-title">Limpar Histórico</h3>
 
         <p class="text-sm text-center opacity-70">
           Tem certeza que deseja apagar todas as partidas salvas?
@@ -468,14 +538,14 @@
         <div class="flex gap-3 pt-2">
           <button
             onclick="closeClearHistoryModal()"
-            class="flex-1 h-11 rounded-xl border border-white/10 uppercase tracking-widest text-xs hover:bg-white/5 transition"
+            class="inline-modal-btn inline-modal-btn--ghost"
           >
             Cancelar
           </button>
 
           <button
             onclick="confirmClearHistory()"
-            class="flex-1 h-11 rounded-xl bg-accent-orange text-white font-bold uppercase tracking-widest text-xs active:scale-95 transition-transform"
+            class="inline-modal-btn inline-modal-btn--danger"
           >
             Limpar
           </button>
