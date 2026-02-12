@@ -124,10 +124,10 @@ function renderTeamPresetsManager() {
       return `
         <div class="bg-white/5 border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between gap-3">
           <div class="min-w-0">
-            <p class="text-sm font-semibold truncate">${escapeHtml(preset.name)}</p>
+            <p class="text-sm font-semibold break-words leading-snug">${escapeHtml(preset.name)}</p>
             ${selectedTag}
           </div>
-          ${deleteButton}
+          <div class="shrink-0">${deleteButton}</div>
         </div>
       `
     })
@@ -158,8 +158,8 @@ function renderTeamPickerOptions() {
               ${isBlocked ? 'disabled' : ''}
             >
               <div class="flex items-center justify-between gap-3">
-                <span class="text-sm font-semibold truncate">${escapeHtml(preset.name)}</span>
-                <span class="text-[10px] uppercase tracking-widest opacity-60">${isCurrent ? 'Selecionado' : isBlocked ? 'Em uso no outro time' : 'Selecionar'}</span>
+                <span class="text-sm font-semibold break-words leading-snug">${escapeHtml(preset.name)}</span>
+                <span class="text-[10px] uppercase tracking-widest opacity-60 shrink-0">${isCurrent ? 'Selecionado' : isBlocked ? 'Em uso no outro time' : 'Selecionar'}</span>
               </div>
             </button>
             ${canDelete ? `<button onclick="deleteTeamPresetFromPicker('${preset.id}')" aria-label="Excluir time" class="h-8 w-8 rounded-lg bg-white/5 hover:bg-white/10 text-accent-orange flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">delete</span></button>` : ''}

@@ -1,6 +1,6 @@
 // Alterar SOMENTE este valor a cada deploy (ex: v2026.02.09-1, v2026.02.10-1).
 // Isso força o navegador a instalar a nova versão do Service Worker.
-const SW_VERSION = 'v2026.02.12-3'
+const SW_VERSION = 'v2026.02.12-4'
 
 const APP_CACHE_PREFIX = `btp-app-${SW_VERSION}-`
 const RUNTIME_CACHE_PREFIX = `btp-runtime-${SW_VERSION}-`
