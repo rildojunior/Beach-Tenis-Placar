@@ -58,7 +58,15 @@
           @apply flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 transition-all;
         }
         .team-name-label {
-          @apply text-xs uppercase font-bold focus:outline-none;
+          @apply text-xs uppercase font-bold focus:outline-none relative;
+        }
+        .team-name-label::after {
+          content: '';
+          position: absolute;
+          left: -10px;
+          right: -10px;
+          top: -4px;
+          bottom: -12px;
         }
         .progress-dot {
           @apply h-1.5 w-6 rounded-full bg-white/10;
@@ -193,9 +201,16 @@
           <div id="cardA" class="score-card border-primary">
             <span
               id="teamNameA"
-              contenteditable="true"
-              spellcheck="false"
-              class="team-name-label text-primary"
+              role="button"
+              tabindex="0"
+              onclick="openTeamPicker('A')"
+              onkeydown="
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  openTeamPicker('A')
+                }
+              "
+              class="team-name-label text-primary cursor-pointer"
             >
               Time A
             </span>
@@ -213,9 +228,16 @@
           <div id="cardB" class="score-card border-accent-orange">
             <span
               id="teamNameB"
-              contenteditable="true"
-              spellcheck="false"
-              class="team-name-label text-accent-orange"
+              role="button"
+              tabindex="0"
+              onclick="openTeamPicker('B')"
+              onkeydown="
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  openTeamPicker('B')
+                }
+              "
+              class="team-name-label text-accent-orange cursor-pointer"
             >
               Time B
             </span>
@@ -297,27 +319,10 @@
         </div>
 
         <div class="mt-4 space-y-3">
-          <p class="text-xs uppercase opacity-60">Nomes dos Times</p>
-
-          <div>
-            <label class="text-[10px] uppercase opacity-50"> Time A </label>
-            <input
-              id="teamNameAInput"
-              type="text"
-              placeholder="Time A"
-              class="form-control"
-            />
-          </div>
-
-          <div>
-            <label class="text-[10px] uppercase opacity-50"> Time B </label>
-            <input
-              id="teamNameBInput"
-              type="text"
-              placeholder="Time B"
-              class="form-control"
-            />
-          </div>
+          <p class="text-xs uppercase opacity-60">Equipes</p>
+          <button onclick="openTeamsManager()" class="modal-secondary-btn">
+            Times Cadastrados
+          </button>
         </div>
 
         <!-- Tipo de pontuação -->
@@ -360,6 +365,73 @@
         <button onclick="applySettings()" class="modal-primary-btn">
           Salvar
         </button>
+      </div>
+    </div>
+
+    <div
+      id="teamsManagerModal"
+      onclick="closeTeamsManager()"
+      class="modal-overlay bg-black/60"
+    >
+      <div class="modal-card modal-content" onclick="event.stopPropagation()">
+        <div class="relative">
+          <h2 class="modal-title">Cadastrar Times</h2>
+          <button
+            onclick="closeTeamsManager()"
+            aria-label="Fechar cadastro de times"
+            class="modal-close-button"
+          >
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <label class="text-xs uppercase opacity-60">Novo time</label>
+          <div class="flex gap-2">
+            <input
+              id="newTeamPresetInput"
+              type="text"
+              placeholder="Ex: Jogador 1 e Jogador 2"
+              class="form-control !mt-0"
+              maxlength="40"
+            />
+            <button
+              onclick="addTeamPreset()"
+              class="modal-primary-btn !w-auto px-4"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="teamPresetsList"
+          class="space-y-2 max-h-[45vh] overflow-y-auto pr-1"
+        ></div>
+      </div>
+    </div>
+
+    <div
+      id="teamPickerModal"
+      onclick="closeTeamPicker()"
+      class="modal-overlay bg-black/60"
+    >
+      <div class="modal-card modal-content" onclick="event.stopPropagation()">
+        <div class="relative">
+          <h2 id="teamPickerTitle" class="modal-title">Selecionar Time</h2>
+          <button
+            onclick="closeTeamPicker()"
+            aria-label="Fechar seleção de time"
+            class="modal-close-button"
+          >
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+
+        <div
+          id="teamPickerList"
+          class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"
+        ></div>
       </div>
     </div>
 

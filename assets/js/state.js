@@ -5,6 +5,14 @@ export const state = {
     setsToWin: 3
   },
   matchHistory: [],
+  teamPresets: [
+    { id: 'default-a', name: 'Time A', locked: true },
+    { id: 'default-b', name: 'Time B', locked: true }
+  ],
+  teamSelection: {
+    A: 'default-a',
+    B: 'default-b'
+  },
   teamNames: {
     A: 'Time A',
     B: 'Time B'
@@ -17,5 +25,6 @@ export const state = {
   },
   modalStack: [],
   deferredPrompt: null,
-  lastTouchEnd: 0
+  lastTouchEnd: 0,
+  activeTeamPicker: null
 }

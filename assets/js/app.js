@@ -3,18 +3,17 @@ import {
   loadHistory,
   loadScore,
   loadSettings,
-  loadTeamNames,
+  loadTeams,
   saveScore,
   saveSettings,
-  saveTeamNames
+  saveTeams,
+  syncTeamNamesFromSelection
 } from './storage.js'
 import {
   applySetsToggleUI,
   closeModal,
   getRefs,
   openModal,
-  setupTeamNameEditing,
-  setupTeamNameInputs,
   showWinner,
   updateScoreUI,
   updateTeamNamesUI
@@ -46,9 +45,9 @@ async function syncAppVersionLabel() {
     const source = await response.text()
     const match = source.match(/const SW_VERSION = '([^']+)'/)
 
-    refs.appVersionLabel.textContent = match?.[1] ? `${match[1]}` : 'versão -'
+    refs.appVersionLabel.textContent = match?.[1] ? `${match[1]}` : '-'
   } catch {
-    refs.appVersionLabel.textContent = 'versão -'
+    refs.appVersionLabel.textContent = '-'
   }
 }
 
@@ -58,14 +57,193 @@ function syncSettingsUI() {
   applySetsToggleUI(refs)
 }
 
-function onTeamNameChanged() {
-  saveTeamNames()
-  updateTeamNamesUI(refs)
-}
-
 function persistAndUpdateScore() {
   saveScore()
   updateScoreUI(refs)
+}
+
+function getPresetById(presetId) {
+  return state.teamPresets.find(preset => preset.id === presetId) || null
+}
+
+function getSafeFallbackPresetId(blockedPresetId) {
+  const firstAvailable = state.teamPresets.find(
+    preset => preset.id !== blockedPresetId
+  )
+
+  if (firstAvailable) return firstAvailable.id
+  return blockedPresetId === 'default-a' ? 'default-b' : 'default-a'
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+}
+
+function syncTeamSelectionUI() {
+  syncTeamNamesFromSelection()
+  updateTeamNamesUI(refs)
+}
+
+function persistTeamsAndUI() {
+  syncTeamSelectionUI()
+  saveTeams()
+}
+
+function getPresetsForDisplay() {
+  return [...state.teamPresets].reverse()
+}
+
+function renderTeamPresetsManager() {
+  if (!refs.teamPresetsList) return
+
+  if (state.teamPresets.length === 0) {
+    refs.teamPresetsList.innerHTML = `
+      <p class="text-center text-sm opacity-50">Nenhum time cadastrado</p>
+    `
+    return
+  }
+
+  refs.teamPresetsList.innerHTML = getPresetsForDisplay()
+    .map(preset => {
+      const isSelectedA = state.teamSelection.A === preset.id
+      const isSelectedB = state.teamSelection.B === preset.id
+      const selectedTag =
+        isSelectedA || isSelectedB
+          ? '<span class="text-[10px] uppercase tracking-widest opacity-50">Jogando</span>'
+          : ''
+
+      const deleteButton = preset.locked
+        ? '<span class="text-[10px] uppercase tracking-widest opacity-35">Padrão</span>'
+        : `<button onclick="deleteTeamPreset('${preset.id}')" class="text-[10px] uppercase tracking-widest text-accent-orange opacity-80 hover:opacity-100">Excluir</button>`
+
+      return `
+        <div class="bg-white/5 border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold truncate">${escapeHtml(preset.name)}</p>
+            ${selectedTag}
+          </div>
+          ${deleteButton}
+        </div>
+      `
+    })
+    .join('')
+}
+
+function renderTeamPickerOptions() {
+  if (!refs.teamPickerList || !refs.teamPickerTitle || !state.activeTeamPicker) return
+
+  const teamKey = state.activeTeamPicker
+  const otherTeamKey = teamKey === 'A' ? 'B' : 'A'
+  const selectedOtherPresetId = state.teamSelection[otherTeamKey]
+
+  refs.teamPickerTitle.textContent = `Selecionar Time ${teamKey}`
+
+  refs.teamPickerList.innerHTML = getPresetsForDisplay()
+    .map(preset => {
+      const isCurrent = state.teamSelection[teamKey] === preset.id
+      const isBlocked = selectedOtherPresetId === preset.id
+
+      return `
+        <button
+          onclick="selectTeamPreset('${preset.id}')"
+          class="w-full text-left rounded-xl border px-3 py-3 transition ${isCurrent ? 'border-primary bg-primary/10' : 'border-white/10 bg-white/5'} ${isBlocked ? 'opacity-40 cursor-not-allowed' : 'hover:bg-white/10'}"
+          ${isBlocked ? 'disabled' : ''}
+        >
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-sm font-semibold truncate">${escapeHtml(preset.name)}</span>
+            <span class="text-[10px] uppercase tracking-widest opacity-60">${isCurrent ? 'Selecionado' : isBlocked ? 'Em uso no outro time' : 'Selecionar'}</span>
+          </div>
+        </button>
+      `
+    })
+    .join('')
+}
+
+function addTeamPreset() {
+  const value = refs.newTeamPresetInput?.value.trim() || ''
+  if (!value) return
+
+  const alreadyExists = state.teamPresets.some(
+    preset => preset.name.toLowerCase() === value.toLowerCase()
+  )
+
+  if (alreadyExists) {
+    refs.newTeamPresetInput.value = ''
+    return
+  }
+
+  state.teamPresets.push({
+    id: `team-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    name: value,
+    locked: false
+  })
+
+  refs.newTeamPresetInput.value = ''
+  persistTeamsAndUI()
+  renderTeamPresetsManager()
+  renderTeamPickerOptions()
+}
+
+function deleteTeamPreset(presetId) {
+  const preset = getPresetById(presetId)
+  if (!preset || preset.locked) return
+
+  state.teamPresets = state.teamPresets.filter(item => item.id !== presetId)
+
+  if (state.teamSelection.A === presetId) {
+    state.teamSelection.A = getSafeFallbackPresetId(state.teamSelection.B)
+  }
+
+  if (state.teamSelection.B === presetId) {
+    state.teamSelection.B = getSafeFallbackPresetId(state.teamSelection.A)
+  }
+
+  if (state.teamSelection.A === state.teamSelection.B) {
+    state.teamSelection.B = getSafeFallbackPresetId(state.teamSelection.A)
+  }
+
+  persistTeamsAndUI()
+  renderTeamPresetsManager()
+  renderTeamPickerOptions()
+}
+
+function openTeamsManager() {
+  renderTeamPresetsManager()
+  openModal('teamsManagerModal')
+}
+
+function closeTeamsManager() {
+  closeModal('teamsManagerModal')
+}
+
+function openTeamPicker(teamKey) {
+  state.activeTeamPicker = teamKey
+  renderTeamPickerOptions()
+  openModal('teamPickerModal')
+}
+
+function closeTeamPicker() {
+  state.activeTeamPicker = null
+  closeModal('teamPickerModal')
+}
+
+function selectTeamPreset(presetId) {
+  if (!state.activeTeamPicker) return
+
+  const teamKey = state.activeTeamPicker
+  const otherTeamKey = teamKey === 'A' ? 'B' : 'A'
+
+  if (state.teamSelection[otherTeamKey] === presetId) return
+  if (!getPresetById(presetId)) return
+
+  state.teamSelection[teamKey] = presetId
+  persistTeamsAndUI()
+  closeTeamPicker()
 }
 
 function resetPoints() {
@@ -149,8 +327,6 @@ function finishMatch() {
 }
 
 function openSettings() {
-  refs.teamNameAInput.value = state.teamNames.A
-  refs.teamNameBInput.value = state.teamNames.B
   openModal('settingsModal')
 }
 
@@ -196,6 +372,16 @@ function handleTouchEnd(event) {
   state.lastTouchEnd = now
 }
 
+function bindTeamManagerInput() {
+  if (!refs.newTeamPresetInput) return
+
+  refs.newTeamPresetInput.addEventListener('keydown', event => {
+    if (event.key !== 'Enter') return
+    event.preventDefault()
+    addTeamPreset()
+  })
+}
+
 function exposeGlobals() {
   window.addPoint = addPoint
   window.removePoint = removePoint
@@ -205,6 +391,13 @@ function exposeGlobals() {
   window.closeSettings = closeSettings
   window.toggleSetsEnabled = toggleSetsEnabled
   window.applySettings = applySettings
+  window.openTeamsManager = openTeamsManager
+  window.closeTeamsManager = closeTeamsManager
+  window.openTeamPicker = openTeamPicker
+  window.closeTeamPicker = closeTeamPicker
+  window.addTeamPreset = addTeamPreset
+  window.deleteTeamPreset = deleteTeamPreset
+  window.selectTeamPreset = selectTeamPreset
   window.closeModal = closeModal
   window.closeWinner = closeWinner
   window.openTieModal = openTieModal
@@ -226,15 +419,14 @@ function boot() {
 
   loadSettings()
   loadScore()
-  loadTeamNames()
+  loadTeams()
   loadHistory()
 
   syncSettingsUI()
   updateTeamNamesUI(refs)
   updateScoreUI(refs)
 
-  setupTeamNameEditing(refs, onTeamNameChanged)
-  setupTeamNameInputs(refs, onTeamNameChanged)
+  bindTeamManagerInput()
   setupInstall(refs)
   registerServiceWorker()
 

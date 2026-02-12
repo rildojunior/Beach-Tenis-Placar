@@ -12,13 +12,15 @@ export function getRefs() {
     teamNameB: document.getElementById('teamNameB'),
     teamNameASet: document.getElementById('teamNameASet'),
     teamNameBSet: document.getElementById('teamNameBSet'),
-    teamNameAInput: document.getElementById('teamNameAInput'),
-    teamNameBInput: document.getElementById('teamNameBInput'),
     scoringMode: document.getElementById('scoringMode'),
     setsToWin: document.getElementById('setsToWin'),
     setsInputWrapper: document.getElementById('setsInputWrapper'),
     toggleSets: document.getElementById('toggleSets'),
     toggleCircle: document.getElementById('toggleCircle'),
+    newTeamPresetInput: document.getElementById('newTeamPresetInput'),
+    teamPresetsList: document.getElementById('teamPresetsList'),
+    teamPickerTitle: document.getElementById('teamPickerTitle'),
+    teamPickerList: document.getElementById('teamPickerList'),
     winnerName: document.getElementById('winnerName'),
     historyList: document.getElementById('historyList'),
     exportHistoryBtn: document.getElementById('exportHistoryBtn'),
@@ -26,15 +28,6 @@ export function getRefs() {
     installPrompt: document.getElementById('installPrompt'),
     appVersionLabel: document.getElementById('appVersionLabel')
   }
-}
-
-function selectAllText(element) {
-  const range = document.createRange()
-  range.selectNodeContents(element)
-
-  const selection = window.getSelection()
-  selection.removeAllRanges()
-  selection.addRange(range)
 }
 
 export function updateTeamNamesUI(refs) {
@@ -95,48 +88,6 @@ export function updateScoreUI(refs) {
   refs.cardB.classList.toggle('leading', pointsB > pointsA)
 
   updateProgress()
-}
-
-export function setupTeamNameEditing(refs, onTeamNameChanged) {
-  refs.teamNameA.addEventListener('focus', () => {
-    setTimeout(() => selectAllText(refs.teamNameA), 0)
-  })
-
-  refs.teamNameB.addEventListener('focus', () => {
-    setTimeout(() => selectAllText(refs.teamNameB), 0)
-  })
-
-  refs.teamNameA.addEventListener('blur', () => {
-    const value = refs.teamNameA.textContent.trim()
-    state.teamNames.A = value || 'Time A'
-    onTeamNameChanged()
-  })
-
-  refs.teamNameB.addEventListener('blur', () => {
-    const value = refs.teamNameB.textContent.trim()
-    state.teamNames.B = value || 'Time B'
-    onTeamNameChanged()
-  })
-
-  refs.teamNameA.addEventListener('keydown', event => {
-    if (event.key === 'Enter') refs.teamNameA.blur()
-  })
-
-  refs.teamNameB.addEventListener('keydown', event => {
-    if (event.key === 'Enter') refs.teamNameB.blur()
-  })
-}
-
-export function setupTeamNameInputs(refs, onTeamNameChanged) {
-  refs.teamNameAInput.addEventListener('input', () => {
-    state.teamNames.A = refs.teamNameAInput.value.trim() || 'Time A'
-    onTeamNameChanged()
-  })
-
-  refs.teamNameBInput.addEventListener('input', () => {
-    state.teamNames.B = refs.teamNameBInput.value.trim() || 'Time B'
-    onTeamNameChanged()
-  })
 }
 
 function updateBodyScroll() {
