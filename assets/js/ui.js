@@ -18,6 +18,7 @@ export function getRefs() {
     toggleSets: document.getElementById('toggleSets'),
     toggleCircle: document.getElementById('toggleCircle'),
     newTeamPresetInput: document.getElementById('newTeamPresetInput'),
+    teamPickerNewTeamInput: document.getElementById('teamPickerNewTeamInput'),
     teamPresetsList: document.getElementById('teamPresetsList'),
     teamPickerTitle: document.getElementById('teamPickerTitle'),
     teamPickerList: document.getElementById('teamPickerList'),

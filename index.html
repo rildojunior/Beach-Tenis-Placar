@@ -428,6 +428,25 @@
           </button>
         </div>
 
+        <div class="space-y-3">
+          <label class="text-xs uppercase opacity-60">Novo time</label>
+          <div class="flex gap-2">
+            <input
+              id="teamPickerNewTeamInput"
+              type="text"
+              placeholder="Ex: Jogador 1 e Jogador 2"
+              class="form-control !mt-0"
+              maxlength="40"
+            />
+            <button
+              onclick="addTeamPresetFromPicker()"
+              class="modal-primary-btn !w-auto px-4"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
         <div
           id="teamPickerList"
           class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"

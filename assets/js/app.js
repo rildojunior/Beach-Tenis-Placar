@@ -147,25 +147,31 @@ function renderTeamPickerOptions() {
     .map(preset => {
       const isCurrent = state.teamSelection[teamKey] === preset.id
       const isBlocked = selectedOtherPresetId === preset.id
+      const canDelete = !preset.locked
 
       return `
-        <button
-          onclick="selectTeamPreset('${preset.id}')"
-          class="w-full text-left rounded-xl border px-3 py-3 transition ${isCurrent ? 'border-primary bg-primary/10' : 'border-white/10 bg-white/5'} ${isBlocked ? 'opacity-40 cursor-not-allowed' : 'hover:bg-white/10'}"
-          ${isBlocked ? 'disabled' : ''}
-        >
-          <div class="flex items-center justify-between gap-3">
-            <span class="text-sm font-semibold truncate">${escapeHtml(preset.name)}</span>
-            <span class="text-[10px] uppercase tracking-widest opacity-60">${isCurrent ? 'Selecionado' : isBlocked ? 'Em uso no outro time' : 'Selecionar'}</span>
+        <div class="rounded-xl border px-3 py-3 transition ${isCurrent ? 'border-primary bg-primary/10' : 'border-white/10 bg-white/5'}">
+          <div class="flex items-center gap-2">
+            <button
+              onclick="selectTeamPreset('${preset.id}')"
+              class="flex-1 text-left ${isBlocked ? 'opacity-40 cursor-not-allowed' : 'hover:opacity-90'}"
+              ${isBlocked ? 'disabled' : ''}
+            >
+              <div class="flex items-center justify-between gap-3">
+                <span class="text-sm font-semibold truncate">${escapeHtml(preset.name)}</span>
+                <span class="text-[10px] uppercase tracking-widest opacity-60">${isCurrent ? 'Selecionado' : isBlocked ? 'Em uso no outro time' : 'Selecionar'}</span>
+              </div>
+            </button>
+            ${canDelete ? `<button onclick="deleteTeamPresetFromPicker('${preset.id}')" aria-label="Excluir time" class="h-8 w-8 rounded-lg bg-white/5 hover:bg-white/10 text-accent-orange flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">delete</span></button>` : ''}
           </div>
-        </button>
+        </div>
       `
     })
     .join('')
 }
 
-function addTeamPreset() {
-  const value = refs.newTeamPresetInput?.value.trim() || ''
+function addTeamPresetFromInput(input) {
+  const value = input?.value.trim() || ''
   if (!value) return
 
   const alreadyExists = state.teamPresets.some(
@@ -173,7 +179,7 @@ function addTeamPreset() {
   )
 
   if (alreadyExists) {
-    refs.newTeamPresetInput.value = ''
+    if (input) input.value = ''
     return
   }
 
@@ -183,10 +189,19 @@ function addTeamPreset() {
     locked: false
   })
 
-  refs.newTeamPresetInput.value = ''
+  if (refs.newTeamPresetInput) refs.newTeamPresetInput.value = ''
+  if (refs.teamPickerNewTeamInput) refs.teamPickerNewTeamInput.value = ''
   persistTeamsAndUI()
   renderTeamPresetsManager()
   renderTeamPickerOptions()
+}
+
+function addTeamPreset() {
+  addTeamPresetFromInput(refs.newTeamPresetInput)
+}
+
+function addTeamPresetFromPicker() {
+  addTeamPresetFromInput(refs.teamPickerNewTeamInput)
 }
 
 function deleteTeamPreset(presetId) {
@@ -212,6 +227,10 @@ function deleteTeamPreset(presetId) {
   renderTeamPickerOptions()
 }
 
+function deleteTeamPresetFromPicker(presetId) {
+  deleteTeamPreset(presetId)
+}
+
 function openTeamsManager() {
   renderTeamPresetsManager()
   openModal('teamsManagerModal')
@@ -223,6 +242,9 @@ function closeTeamsManager() {
 
 function openTeamPicker(teamKey) {
   state.activeTeamPicker = teamKey
+  if (refs.teamPickerNewTeamInput) {
+    refs.teamPickerNewTeamInput.value = ''
+  }
   renderTeamPickerOptions()
   openModal('teamPickerModal')
 }
@@ -380,6 +402,12 @@ function bindTeamManagerInput() {
     event.preventDefault()
     addTeamPreset()
   })
+
+  refs.teamPickerNewTeamInput?.addEventListener('keydown', event => {
+    if (event.key !== 'Enter') return
+    event.preventDefault()
+    addTeamPresetFromPicker()
+  })
 }
 
 function exposeGlobals() {
@@ -396,7 +424,9 @@ function exposeGlobals() {
   window.openTeamPicker = openTeamPicker
   window.closeTeamPicker = closeTeamPicker
   window.addTeamPreset = addTeamPreset
+  window.addTeamPresetFromPicker = addTeamPresetFromPicker
   window.deleteTeamPreset = deleteTeamPreset
+  window.deleteTeamPresetFromPicker = deleteTeamPresetFromPicker
   window.selectTeamPreset = selectTeamPreset
   window.closeModal = closeModal
   window.closeWinner = closeWinner
