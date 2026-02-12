@@ -10,7 +10,7 @@ import {
   syncTeamNamesFromSelection
 } from './storage.js'
 import {
-  applySetsToggleUI,
+  applyGamesToggleUI,
   closeModal,
   getRefs,
   openModal,
@@ -53,8 +53,8 @@ async function syncAppVersionLabel() {
 
 function syncSettingsUI() {
   refs.scoringMode.value = state.settings.scoringMode
-  refs.setsToWin.value = state.settings.setsToWin
-  applySetsToggleUI(refs)
+  refs.gamesToWin.value = state.settings.gamesToWin
+  applyGamesToggleUI(refs)
 }
 
 function persistAndUpdateScore() {
@@ -274,13 +274,13 @@ function resetPoints() {
 }
 
 function checkMatchEnd() {
-  if (!state.settings.setsEnabled) return
+  if (!state.settings.gamesEnabled) return
 
   if (
-    state.score.setsA === state.settings.setsToWin ||
-    state.score.setsB === state.settings.setsToWin
+    state.score.gamesA === state.settings.gamesToWin ||
+    state.score.gamesB === state.settings.gamesToWin
   ) {
-    const winnerKey = state.score.setsA > state.score.setsB ? 'A' : 'B'
+    const winnerKey = state.score.gamesA > state.score.gamesB ? 'A' : 'B'
     showWinner(winnerKey, refs)
   }
 }
@@ -289,13 +289,13 @@ function addPoint(team) {
   if (team === 'A') {
     state.score.pointsA += 1
     if (state.score.pointsA === 4) {
-      state.score.setsA += 1
+      state.score.gamesA += 1
       resetPoints()
     }
   } else {
     state.score.pointsB += 1
     if (state.score.pointsB === 4) {
-      state.score.setsB += 1
+      state.score.gamesB += 1
       resetPoints()
     }
   }
@@ -324,27 +324,27 @@ function resetGame(saveInHistory = true) {
   state.score = {
     pointsA: 0,
     pointsB: 0,
-    setsA: 0,
-    setsB: 0
+    gamesA: 0,
+    gamesB: 0
   }
 
   persistAndUpdateScore()
 }
 
 function finishMatch() {
-  const { setsA, setsB } = state.score
+  const { gamesA, gamesB } = state.score
 
-  if (setsA === 0 && setsB === 0) {
+  if (gamesA === 0 && gamesB === 0) {
     resetGame(false)
     return
   }
 
-  if (setsA === setsB) {
+  if (gamesA === gamesB) {
     openModal('tieModal')
     return
   }
 
-  const winnerKey = setsA > setsB ? 'A' : 'B'
+  const winnerKey = gamesA > gamesB ? 'A' : 'B'
   showWinner(winnerKey, refs)
 }
 
@@ -359,16 +359,16 @@ function closeSettings() {
 function applySettings() {
   state.settings.scoringMode = refs.scoringMode.value
 
-  const parsedSetsToWin = Number(refs.setsToWin.value)
-  state.settings.setsToWin = parsedSetsToWin > 0 ? parsedSetsToWin : 1
+  const parsedGamesToWin = Number(refs.gamesToWin.value)
+  state.settings.gamesToWin = parsedGamesToWin > 0 ? parsedGamesToWin : 1
 
   saveSettings()
   closeSettings()
 }
 
-function toggleSetsEnabled() {
-  state.settings.setsEnabled = !state.settings.setsEnabled
-  applySetsToggleUI(refs)
+function toggleGamesEnabled() {
+  state.settings.gamesEnabled = !state.settings.gamesEnabled
+  applyGamesToggleUI(refs)
   saveSettings()
 }
 
@@ -417,7 +417,7 @@ function exposeGlobals() {
   window.resetGame = () => resetGame(true)
   window.openSettings = openSettings
   window.closeSettings = closeSettings
-  window.toggleSetsEnabled = toggleSetsEnabled
+  window.toggleGamesEnabled = toggleGamesEnabled
   window.applySettings = applySettings
   window.openTeamsManager = openTeamsManager
   window.closeTeamsManager = closeTeamsManager

@@ -3,22 +3,22 @@ import { clearHistoryStorage, saveHistory } from './storage.js'
 import { closeModal, openModal } from './ui.js'
 
 export function saveMatchToHistory() {
-  const { pointsA, pointsB, setsA, setsB } = state.score
+  const { pointsA, pointsB, gamesA, gamesB } = state.score
 
-  if (setsA === 0 && setsB === 0 && pointsA === 0 && pointsB === 0) return
+  if (gamesA === 0 && gamesB === 0 && pointsA === 0 && pointsB === 0) return
 
   let winnerKey = 'A'
-  if (setsB > setsA) {
+  if (gamesB > gamesA) {
     winnerKey = 'B'
-  } else if (setsA === setsB && pointsB > pointsA) {
+  } else if (gamesA === gamesB && pointsB > pointsA) {
     winnerKey = 'B'
   }
 
   state.matchHistory.unshift({
     teamA: state.teamNames.A,
     teamB: state.teamNames.B,
-    setsA,
-    setsB,
+    gamesA,
+    gamesB,
     winner: winnerKey,
     date: new Date().toISOString()
   })
@@ -50,7 +50,7 @@ export function renderHistory(refs) {
           <span class="${winnerColor}">
             ${match.winner === 'A' ? match.teamA : match.teamB}
           </span>
-          <span class="opacity-60">${match.setsA} x ${match.setsB}</span>
+          <span class="opacity-60">${match.gamesA} x ${match.gamesB}</span>
         </div>
 
         <div class="text-xs opacity-50">${match.teamA} x ${match.teamB}</div>
@@ -168,7 +168,7 @@ export async function exportHistoryImage(refs) {
     ctx.textAlign = 'right'
     ctx.font = "800 36px 'Spline Sans', sans-serif"
     ctx.fillStyle = 'rgba(255,255,255,0.85)'
-    ctx.fillText(`${match.setsA} x ${match.setsB}`, width - 160, blockTop)
+    ctx.fillText(`${match.gamesA} x ${match.gamesB}`, width - 160, blockTop)
 
     ctx.textAlign = 'left'
     ctx.font = "500 26px 'Spline Sans', sans-serif"

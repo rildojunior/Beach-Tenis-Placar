@@ -4,18 +4,18 @@ export function getRefs() {
   return {
     pointsAEl: document.getElementById('pointsA'),
     pointsBEl: document.getElementById('pointsB'),
-    setsAEl: document.getElementById('setsA'),
-    setsBEl: document.getElementById('setsB'),
+    gamesAEl: document.getElementById('gamesA'),
+    gamesBEl: document.getElementById('gamesB'),
     cardA: document.getElementById('cardA'),
     cardB: document.getElementById('cardB'),
     teamNameA: document.getElementById('teamNameA'),
     teamNameB: document.getElementById('teamNameB'),
-    teamNameASet: document.getElementById('teamNameASet'),
-    teamNameBSet: document.getElementById('teamNameBSet'),
+    teamNameAGame: document.getElementById('teamNameAGame'),
+    teamNameBGame: document.getElementById('teamNameBGame'),
     scoringMode: document.getElementById('scoringMode'),
-    setsToWin: document.getElementById('setsToWin'),
-    setsInputWrapper: document.getElementById('setsInputWrapper'),
-    toggleSets: document.getElementById('toggleSets'),
+    gamesToWin: document.getElementById('gamesToWin'),
+    gamesInputWrapper: document.getElementById('gamesInputWrapper'),
+    toggleGames: document.getElementById('toggleGames'),
     toggleCircle: document.getElementById('toggleCircle'),
     newTeamPresetInput: document.getElementById('newTeamPresetInput'),
     teamPickerNewTeamInput: document.getElementById('teamPickerNewTeamInput'),
@@ -34,23 +34,23 @@ export function getRefs() {
 export function updateTeamNamesUI(refs) {
   refs.teamNameA.textContent = state.teamNames.A
   refs.teamNameB.textContent = state.teamNames.B
-  refs.teamNameASet.textContent = state.teamNames.A
-  refs.teamNameBSet.textContent = state.teamNames.B
+  refs.teamNameAGame.textContent = state.teamNames.A
+  refs.teamNameBGame.textContent = state.teamNames.B
 }
 
-export function applySetsToggleUI(refs) {
-  if (state.settings.setsEnabled) {
-    refs.toggleSets.classList.remove('bg-white/10')
-    refs.toggleSets.classList.add('bg-primary')
+export function applyGamesToggleUI(refs) {
+  if (state.settings.gamesEnabled) {
+    refs.toggleGames.classList.remove('bg-white/10')
+    refs.toggleGames.classList.add('bg-primary')
     refs.toggleCircle.style.transform = 'translateX(24px)'
-    refs.setsInputWrapper.classList.remove('hidden')
+    refs.gamesInputWrapper.classList.remove('hidden')
     return
   }
 
-  refs.toggleSets.classList.add('bg-white/10')
-  refs.toggleSets.classList.remove('bg-primary')
+  refs.toggleGames.classList.add('bg-white/10')
+  refs.toggleGames.classList.remove('bg-primary')
   refs.toggleCircle.style.transform = 'translateX(0)'
-  refs.setsInputWrapper.classList.add('hidden')
+  refs.gamesInputWrapper.classList.add('hidden')
 }
 
 function getDisplayPoint(points) {
@@ -78,12 +78,12 @@ function updateProgress() {
 }
 
 export function updateScoreUI(refs) {
-  const { pointsA, pointsB, setsA, setsB } = state.score
+  const { pointsA, pointsB, gamesA, gamesB } = state.score
 
   refs.pointsAEl.textContent = getDisplayPoint(pointsA)
   refs.pointsBEl.textContent = getDisplayPoint(pointsB)
-  refs.setsAEl.textContent = setsA
-  refs.setsBEl.textContent = setsB
+  refs.gamesAEl.textContent = gamesA
+  refs.gamesBEl.textContent = gamesB
 
   refs.cardA.classList.toggle('leading', pointsA > pointsB)
   refs.cardB.classList.toggle('leading', pointsB > pointsA)

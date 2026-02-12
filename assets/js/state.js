@@ -1,8 +1,8 @@
 export const state = {
   settings: {
     scoringMode: 'simplified',
-    setsEnabled: false,
-    setsToWin: 3
+    gamesEnabled: false,
+    gamesToWin: 3
   },
   matchHistory: [],
   teamPresets: [
@@ -20,8 +20,8 @@ export const state = {
   score: {
     pointsA: 0,
     pointsB: 0,
-    setsA: 0,
-    setsB: 0
+    gamesA: 0,
+    gamesB: 0
   },
   modalStack: [],
   deferredPrompt: null,

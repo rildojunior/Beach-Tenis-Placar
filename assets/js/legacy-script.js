@@ -1,7 +1,7 @@
 let settings = {
   scoringMode: 'simplified',
-  setsEnabled: false, // 🔴 padrão: infinito
-  setsToWin: 3
+  gamesEnabled: false, // 🔴 padrão: infinito
+  gamesToWin: 3
 }
 
 let matchHistory = []
@@ -30,14 +30,14 @@ function updateTeamNamesUI() {
   document.getElementById('teamNameA').textContent = teamNames.A
   document.getElementById('teamNameB').textContent = teamNames.B
 
-  document.getElementById('teamNameASet').textContent = teamNames.A
-  document.getElementById('teamNameBSet').textContent = teamNames.B
+  document.getElementById('teamNameAGame').textContent = teamNames.A
+  document.getElementById('teamNameBGame').textContent = teamNames.B
 }
 
 let pointsA = 0,
   pointsB = 0,
-  setsA = 0,
-  setsB = 0
+  gamesA = 0,
+  gamesB = 0
 
 function loadSettings() {
   const s = localStorage.getItem('bt-settings')
@@ -47,8 +47,8 @@ function loadSettings() {
     saveSettings() // salva padrão infinito na primeira vez
   }
   document.getElementById('scoringMode').value = settings.scoringMode
-  document.getElementById('setsToWin').value = settings.setsToWin
-  applySetsToggleUI()
+  document.getElementById('gamesToWin').value = settings.gamesToWin
+  applyGamesToggleUI()
 }
 
 function saveSettings() {
@@ -76,18 +76,18 @@ function closeSettings() {
   closeModal('settingsModal')
 }
 
-function toggleSetsEnabled() {
-  settings.setsEnabled = !settings.setsEnabled
-  applySetsToggleUI()
+function toggleGamesEnabled() {
+  settings.gamesEnabled = !settings.gamesEnabled
+  applyGamesToggleUI()
   saveSettings()
 }
 
-function applySetsToggleUI() {
-  const wrapper = document.getElementById('setsInputWrapper')
-  const toggle = document.getElementById('toggleSets')
+function applyGamesToggleUI() {
+  const wrapper = document.getElementById('gamesInputWrapper')
+  const toggle = document.getElementById('toggleGames')
   const circle = document.getElementById('toggleCircle')
 
-  if (settings.setsEnabled) {
+  if (settings.gamesEnabled) {
     toggle.classList.remove('bg-white/10')
     toggle.classList.add('bg-primary')
     circle.style.transform = 'translateX(24px)'
@@ -102,8 +102,8 @@ function applySetsToggleUI() {
 
 function applySettings() {
   settings.scoringMode = document.getElementById('scoringMode').value
-  const value = Number(document.getElementById('setsToWin').value)
-  settings.setsToWin = value > 0 ? value : 1
+  const value = Number(document.getElementById('gamesToWin').value)
+  settings.gamesToWin = value > 0 ? value : 1
   saveSettings()
   closeSettings()
 }
@@ -116,10 +116,10 @@ function getDisplayPoint(points) {
 }
 
 function checkMatchEnd() {
-  if (!settings.setsEnabled) return
+  if (!settings.gamesEnabled) return
 
-  if (setsA === settings.setsToWin || setsB === settings.setsToWin) {
-    const winnerKey = setsA > setsB ? 'A' : 'B'
+  if (gamesA === settings.gamesToWin || gamesB === settings.gamesToWin) {
+    const winnerKey = gamesA > gamesB ? 'A' : 'B'
     showWinner(winnerKey)
   }
 }
@@ -128,13 +128,13 @@ function addPoint(team) {
   if (team === 'A') {
     pointsA++
     if (pointsA === 4) {
-      setsA++
+      gamesA++
       resetPoints()
     }
   } else {
     pointsB++
     if (pointsB === 4) {
-      setsB++
+      gamesB++
       resetPoints()
     }
   }
@@ -157,32 +157,32 @@ function resetPoints() {
 
 function finishMatch() {
   // 🔹 1. Sets 0x0 → apenas reseta, sem salvar histórico
-  if (setsA === 0 && setsB === 0) {
+  if (gamesA === 0 && gamesB === 0) {
     resetGameWithoutHistory()
     return
   }
 
   // 🔹 2. Sets empatados → exige desempate
-  if (setsA === setsB) {
+  if (gamesA === gamesB) {
     openTieModal()
     return
   }
 
   // 🔹 3. Existe vencedor → mesmo fluxo do sets para vencer
-  const winnerKey = setsA > setsB ? 'A' : 'B'
+  const winnerKey = gamesA > gamesB ? 'A' : 'B'
   showWinner(winnerKey)
 }
 
 function resetGame() {
   saveMatchToHistory()
 
-  pointsA = pointsB = setsA = setsB = 0
+  pointsA = pointsB = gamesA = gamesB = 0
   save()
   update()
 }
 
 function resetGameWithoutHistory() {
-  pointsA = pointsB = setsA = setsB = 0
+  pointsA = pointsB = gamesA = gamesB = 0
   save()
   update()
 }
@@ -203,8 +203,8 @@ function updateProgress() {
 function update() {
   pointsAEl.textContent = getDisplayPoint(pointsA)
   pointsBEl.textContent = getDisplayPoint(pointsB)
-  setsAEl.textContent = setsA
-  setsBEl.textContent = setsB
+  gamesAEl.textContent = gamesA
+  gamesBEl.textContent = gamesB
 
   cardA.classList.toggle('leading', pointsA > pointsB)
   cardB.classList.toggle('leading', pointsB > pointsA)
@@ -215,14 +215,14 @@ function update() {
 function save() {
   localStorage.setItem(
     'bt-score',
-    JSON.stringify({ pointsA, pointsB, setsA, setsB })
+    JSON.stringify({ pointsA, pointsB, gamesA, gamesB })
   )
 }
 
 function load() {
   const d = JSON.parse(localStorage.getItem('bt-score'))
   if (!d) return
-  ;({ pointsA, pointsB, setsA, setsB } = d)
+  ;({ pointsA, pointsB, gamesA, gamesB } = d)
   update()
 }
 
@@ -330,21 +330,21 @@ function saveHistory() {
 
 function saveMatchToHistory() {
   // só salva se houve alguma pontuação
-  if (setsA === 0 && setsB === 0 && pointsA === 0 && pointsB === 0) return
+  if (gamesA === 0 && gamesB === 0 && pointsA === 0 && pointsB === 0) return
 
   // Determina vencedor para o histórico (Sets > Pontos)
   let winnerKey = 'A'
-  if (setsB > setsA) {
+  if (gamesB > gamesA) {
     winnerKey = 'B'
-  } else if (setsA === setsB && pointsB > pointsA) {
+  } else if (gamesA === gamesB && pointsB > pointsA) {
     winnerKey = 'B'
   }
 
   matchHistory.unshift({
     teamA: teamNames.A,
     teamB: teamNames.B,
-    setsA,
-    setsB,
+    gamesA,
+    gamesB,
     winner: winnerKey,
     date: new Date().toISOString()
   })
@@ -390,7 +390,7 @@ function renderHistory() {
             ${match.winner === 'A' ? match.teamA : match.teamB}
           </span>
           <span class="opacity-60">
-            ${match.setsA} x ${match.setsB}
+            ${match.gamesA} x ${match.gamesB}
           </span>
         </div>
 
@@ -575,7 +575,7 @@ async function exportHistoryImage() {
     const isTeamA = match.winner === 'A'
     const winnerName = isTeamA ? match.teamA : match.teamB
     const vsLine = `${match.teamA} x ${match.teamB}`
-    const scoreLine = `${match.setsA} x ${match.setsB}`
+    const scoreLine = `${match.gamesA} x ${match.gamesB}`
     const dateLine = new Date(match.date).toLocaleString()
 
     const cardHeight = 150
@@ -649,8 +649,8 @@ async function exportHistoryImage() {
 
 const pointsAEl = document.getElementById('pointsA')
 const pointsBEl = document.getElementById('pointsB')
-const setsAEl = document.getElementById('setsA')
-const setsBEl = document.getElementById('setsB')
+const gamesAEl = document.getElementById('gamesA')
+const gamesBEl = document.getElementById('gamesB')
 const cardA = document.getElementById('cardA')
 const cardB = document.getElementById('cardB')
 

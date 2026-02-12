@@ -19,10 +19,45 @@ export function loadSettings() {
   const saved = safeParse(localStorage.getItem('bt-settings'), null)
 
   if (saved) {
-    state.settings = {
-      ...state.settings,
-      ...saved
+    const migratedSettings = {}
+    let hasLegacyKeys = false
+
+    if (
+      typeof saved.gamesEnabled !== 'boolean' &&
+      typeof saved.setsEnabled === 'boolean'
+    ) {
+      migratedSettings.gamesEnabled = saved.setsEnabled
+      hasLegacyKeys = true
     }
+
+    if (
+      typeof saved.gamesToWin !== 'number' &&
+      typeof saved.setsToWin === 'number'
+    ) {
+      migratedSettings.gamesToWin = saved.setsToWin
+      hasLegacyKeys = true
+    }
+
+    state.settings = {
+      scoringMode:
+        typeof saved.scoringMode === 'string'
+          ? saved.scoringMode
+          : state.settings.scoringMode,
+      gamesEnabled:
+        typeof saved.gamesEnabled === 'boolean'
+          ? saved.gamesEnabled
+          : typeof migratedSettings.gamesEnabled === 'boolean'
+            ? migratedSettings.gamesEnabled
+            : state.settings.gamesEnabled,
+      gamesToWin:
+        typeof saved.gamesToWin === 'number'
+          ? saved.gamesToWin
+          : typeof migratedSettings.gamesToWin === 'number'
+            ? migratedSettings.gamesToWin
+            : state.settings.gamesToWin
+    }
+
+    if (hasLegacyKeys) saveSettings()
     return
   }
 
@@ -164,10 +199,43 @@ export function loadScore() {
   const saved = safeParse(localStorage.getItem('bt-score'), null)
   if (!saved) return
 
-  state.score = {
-    ...state.score,
-    ...saved
+  const migratedScore = {}
+  let hasLegacyKeys = false
+
+  if (
+    typeof saved.gamesA !== 'number' &&
+    typeof saved.setsA === 'number'
+  ) {
+    migratedScore.gamesA = saved.setsA
+    hasLegacyKeys = true
   }
+
+  if (
+    typeof saved.gamesB !== 'number' &&
+    typeof saved.setsB === 'number'
+  ) {
+    migratedScore.gamesB = saved.setsB
+    hasLegacyKeys = true
+  }
+
+  state.score = {
+    pointsA: typeof saved.pointsA === 'number' ? saved.pointsA : state.score.pointsA,
+    pointsB: typeof saved.pointsB === 'number' ? saved.pointsB : state.score.pointsB,
+    gamesA:
+      typeof saved.gamesA === 'number'
+        ? saved.gamesA
+        : typeof migratedScore.gamesA === 'number'
+          ? migratedScore.gamesA
+          : state.score.gamesA,
+    gamesB:
+      typeof saved.gamesB === 'number'
+        ? saved.gamesB
+        : typeof migratedScore.gamesB === 'number'
+          ? migratedScore.gamesB
+          : state.score.gamesB
+  }
+
+  if (hasLegacyKeys) saveScore()
 }
 
 export function saveScore() {
@@ -177,7 +245,47 @@ export function saveScore() {
 export function loadHistory() {
   const saved = safeParse(localStorage.getItem('bt-history'), null)
   if (!Array.isArray(saved)) return
+
+  let hasLegacyKeys = false
+
   state.matchHistory = saved
+    .filter(match => match && typeof match === 'object')
+    .map(match => {
+      const normalized = {
+        teamA: typeof match.teamA === 'string' ? match.teamA : 'Time A',
+        teamB: typeof match.teamB === 'string' ? match.teamB : 'Time B',
+        winner: match.winner === 'B' ? 'B' : 'A',
+        date:
+          typeof match.date === 'string'
+            ? match.date
+            : new Date().toISOString()
+      }
+
+      if (
+        typeof match.gamesA !== 'number' &&
+        typeof match.setsA === 'number'
+      ) {
+        normalized.gamesA = match.setsA
+        hasLegacyKeys = true
+      }
+
+      if (
+        typeof match.gamesB !== 'number' &&
+        typeof match.setsB === 'number'
+      ) {
+        normalized.gamesB = match.setsB
+        hasLegacyKeys = true
+      }
+
+      if (typeof match.gamesA === 'number') normalized.gamesA = match.gamesA
+      if (typeof match.gamesB === 'number') normalized.gamesB = match.gamesB
+      if (typeof normalized.gamesA !== 'number') normalized.gamesA = 0
+      if (typeof normalized.gamesB !== 'number') normalized.gamesB = 0
+
+      return normalized
+    })
+
+  if (hasLegacyKeys) saveHistory()
 }
 
 export function saveHistory() {
