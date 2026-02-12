@@ -23,7 +23,8 @@ export function getRefs() {
     historyList: document.getElementById('historyList'),
     exportHistoryBtn: document.getElementById('exportHistoryBtn'),
     historyCanvas: document.getElementById('historyCanvas'),
-    installPrompt: document.getElementById('installPrompt')
+    installPrompt: document.getElementById('installPrompt'),
+    appVersionLabel: document.getElementById('appVersionLabel')
   }
 }
 

@@ -38,6 +38,20 @@ import {
 
 const refs = getRefs()
 
+async function syncAppVersionLabel() {
+  if (!refs.appVersionLabel) return
+
+  try {
+    const response = await fetch('./service-worker.js', { cache: 'no-store' })
+    const source = await response.text()
+    const match = source.match(/const SW_VERSION = '([^']+)'/)
+
+    refs.appVersionLabel.textContent = match?.[1] ? `${match[1]}` : 'versão -'
+  } catch {
+    refs.appVersionLabel.textContent = 'versão -'
+  }
+}
+
 function syncSettingsUI() {
   refs.scoringMode.value = state.settings.scoringMode
   refs.setsToWin.value = state.settings.setsToWin
@@ -208,6 +222,8 @@ function exposeGlobals() {
 }
 
 function boot() {
+  syncAppVersionLabel()
+
   loadSettings()
   loadScore()
   loadTeamNames()

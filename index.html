@@ -138,10 +138,7 @@
     <header class="app-header">
       <!-- Histórico -->
       <div class="flex justify-start">
-        <button
-          onclick="openHistory()"
-          class="icon-button"
-        >
+        <button onclick="openHistory()" class="icon-button">
           <span class="material-symbols-outlined text-xl">history</span>
         </button>
       </div>
@@ -154,10 +151,7 @@
 
       <!-- Configurações -->
       <div class="flex justify-end">
-        <button
-          onclick="openSettings()"
-          class="icon-button"
-        >
+        <button onclick="openSettings()" class="icon-button">
           <span class="material-symbols-outlined text-xl">settings</span>
         </button>
       </div>
@@ -193,15 +187,10 @@
       </section>
 
       <section class="px-4 py-2">
-        <h4 class="section-title">
-          Pontuação da Partida
-        </h4>
+        <h4 class="section-title">Pontuação da Partida</h4>
 
         <div class="flex gap-3">
-          <div
-            id="cardA"
-            class="score-card border-primary"
-          >
+          <div id="cardA" class="score-card border-primary">
             <span
               id="teamNameA"
               contenteditable="true"
@@ -221,10 +210,7 @@
             </div>
           </div>
 
-          <div
-            id="cardB"
-            class="score-card border-accent-orange"
-          >
+          <div id="cardB" class="score-card border-accent-orange">
             <span
               id="teamNameB"
               contenteditable="true"
@@ -258,10 +244,7 @@
                 >add</span
               >
             </button>
-            <button
-              onclick="removePoint('A')"
-              class="subtle-action"
-            >
+            <button onclick="removePoint('A')" class="subtle-action">
               <span class="material-symbols-outlined">remove</span>
             </button>
           </div>
@@ -275,10 +258,7 @@
                 >add</span
               >
             </button>
-            <button
-              onclick="removePoint('B')"
-              class="subtle-action"
-            >
+            <button onclick="removePoint('B')" class="subtle-action">
               <span class="material-symbols-outlined">remove</span>
             </button>
           </div>
@@ -286,10 +266,7 @@
       </section>
 
       <footer class="px-4 pb-6">
-        <button
-          onclick="finishMatch()"
-          class="finish-button"
-        >
+        <button onclick="finishMatch()" class="finish-button">
           Finalizar Partida
         </button>
       </footer>
@@ -300,12 +277,15 @@
       onclick="closeSettings()"
       class="modal-overlay bg-black/60"
     >
-      <div
-        class="modal-card modal-content"
-        onclick="event.stopPropagation()"
-      >
+      <div class="modal-card modal-content" onclick="event.stopPropagation()">
         <div class="relative">
           <h2 class="modal-title">Configurações</h2>
+          <p
+            id="appVersionLabel"
+            class="mt-1 text-center text-[10px] uppercase tracking-wide opacity-45"
+          >
+            versão -
+          </p>
 
           <button
             onclick="closeModal('settingsModal')"
@@ -343,10 +323,7 @@
         <!-- Tipo de pontuação -->
         <div>
           <label class="text-xs uppercase opacity-60">Pontuação</label>
-          <select
-            id="scoringMode"
-            class="form-control"
-          >
+          <select id="scoringMode" class="form-control">
             <option value="official">Oficial (15,30,40)</option>
             <option value="simplified">Simplificada (1,2,3)</option>
           </select>
@@ -380,24 +357,14 @@
           </div>
         </div>
 
-        <button
-          onclick="applySettings()"
-          class="modal-primary-btn"
-        >
+        <button onclick="applySettings()" class="modal-primary-btn">
           Salvar
         </button>
       </div>
     </div>
 
-    <div
-      id="winnerModal"
-      onclick="closeWinner()"
-      class="modal-overlay"
-    >
-      <div
-        class="modal-card modal-content"
-        onclick="event.stopPropagation()"
-      >
+    <div id="winnerModal" onclick="closeWinner()" class="modal-overlay">
+      <div class="modal-card modal-content" onclick="event.stopPropagation()">
         <h2 class="text-xl font-black text-center">🏆 FIM DE PARTIDA 🏆</h2>
 
         <p class="text-lg font-bold text-center">
@@ -417,15 +384,8 @@
       </div>
     </div>
 
-    <div
-      id="tieModal"
-      onclick="closeTieModal()"
-      class="modal-overlay"
-    >
-      <div
-        class="modal-card modal-content"
-        onclick="event.stopPropagation()"
-      >
+    <div id="tieModal" onclick="closeTieModal()" class="modal-overlay">
+      <div class="modal-card modal-content" onclick="event.stopPropagation()">
         <h2 class="modal-title">Partida Empatada</h2>
 
         <p class="text-sm text-center opacity-70 leading-relaxed">
@@ -445,10 +405,7 @@
 
     <script type="module" src="assets/js/app.js"></script>
 
-    <div
-      id="installPrompt"
-      class="install-prompt"
-    >
+    <div id="installPrompt" class="install-prompt">
       <span class="material-symbols-outlined text-3xl text-primary">
         download
       </span>
@@ -459,27 +416,17 @@
       </div>
 
       <div class="flex flex-col gap-2 items-end">
-        <button
-          onclick="installApp()"
-          class="install-primary-btn"
-        >
+        <button onclick="installApp()" class="install-primary-btn">
           Instalar
         </button>
 
-        <button
-          onclick="dismissInstallPrompt()"
-          class="install-dismiss-btn"
-        >
+        <button onclick="dismissInstallPrompt()" class="install-dismiss-btn">
           Não mostrar novamente
         </button>
       </div>
     </div>
 
-    <div
-      id="historyModal"
-      onclick="closeHistory()"
-      class="modal-overlay"
-    >
+    <div id="historyModal" onclick="closeHistory()" class="modal-overlay">
       <div
         class="modal-card modal-content p-5"
         onclick="event.stopPropagation()"
@@ -496,10 +443,7 @@
           </button>
         </div>
 
-        <button
-          onclick="openClearHistoryModal()"
-          class="modal-secondary-btn"
-        >
+        <button onclick="openClearHistoryModal()" class="modal-secondary-btn">
           Limpar histórico
         </button>
 
