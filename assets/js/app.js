@@ -62,6 +62,44 @@ function persistAndUpdateScore() {
   updateScoreUI(refs)
 }
 
+function parseEditedGamesValue(rawValue, maxAllowed) {
+  const parsed = Number(rawValue.trim())
+  if (!Number.isInteger(parsed) || parsed < 0 || parsed > maxAllowed) return null
+  return parsed
+}
+
+function editGamesScore(team) {
+  if (team !== 'A' && team !== 'B') return
+
+  const scoreKey = team === 'A' ? 'gamesA' : 'gamesB'
+  const teamName = state.teamNames[team] || `Time ${team}`
+  const currentValue = String(state.score[scoreKey])
+  const maxAllowed = state.settings.gamesEnabled
+    ? Math.max(0, state.settings.gamesToWin - 1)
+    : 99
+  const limitHint = state.settings.gamesEnabled
+    ? `0 a ${maxAllowed} (deve ser menor que ${state.settings.gamesToWin})`
+    : '0 a 99'
+
+  const rawValue = window.prompt(
+    `Digite o novo valor de games para ${teamName} (${limitHint}).`,
+    currentValue
+  )
+
+  if (rawValue === null) return
+
+  const parsedValue = parseEditedGamesValue(rawValue, maxAllowed)
+
+  if (parsedValue === null) {
+    window.alert(`Valor inválido para games. Use um número inteiro entre 0 e ${maxAllowed}.`)
+    return
+  }
+
+  state.score[scoreKey] = parsedValue
+  checkMatchEnd()
+  persistAndUpdateScore()
+}
+
 function getPresetById(presetId) {
   return state.teamPresets.find(preset => preset.id === presetId) || null
 }
@@ -442,6 +480,7 @@ function exposeGlobals() {
 
   window.installApp = () => installApp(refs)
   window.dismissInstallPrompt = () => dismissInstallPrompt(refs)
+  window.editGamesScore = editGamesScore
 }
 
 function boot() {

@@ -177,7 +177,22 @@
 
           <div class="flex items-center justify-center gap-8">
             <div class="text-center">
-              <div id="gamesA" class="text-4xl font-black">0</div>
+              <div
+                id="gamesA"
+                role="button"
+                tabindex="0"
+                onclick="editGamesScore('A')"
+                onkeydown="
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    editGamesScore('A')
+                  }
+                "
+                class="text-4xl font-black cursor-pointer"
+                title="Editar games do Time A"
+              >
+                0
+              </div>
               <span
                 id="teamNameAGame"
                 class="block max-w-[110px] mx-auto text-[10px] leading-tight opacity-50 uppercase break-words whitespace-normal"
@@ -189,7 +204,22 @@
             <div class="h-10 w-px bg-white/10 rounded-full"></div>
 
             <div class="text-center">
-              <div id="gamesB" class="text-4xl font-black">0</div>
+              <div
+                id="gamesB"
+                role="button"
+                tabindex="0"
+                onclick="editGamesScore('B')"
+                onkeydown="
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    editGamesScore('B')
+                  }
+                "
+                class="text-4xl font-black cursor-pointer"
+                title="Editar games do Time B"
+              >
+                0
+              </div>
               <span
                 id="teamNameBGame"
                 class="block max-w-[110px] mx-auto text-[10px] leading-tight opacity-50 uppercase break-words whitespace-normal"
