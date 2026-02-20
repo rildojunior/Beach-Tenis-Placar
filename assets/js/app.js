@@ -677,6 +677,7 @@ function bindTeamManagerInput() {
     event.preventDefault()
     addTeamPresetFromPicker()
   })
+
 }
 
 function exposeGlobals() {
