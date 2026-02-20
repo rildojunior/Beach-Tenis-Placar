@@ -1,6 +1,12 @@
 import { state } from './state.js'
 import { clearHistoryStorage, saveHistory } from './storage.js'
 import { closeModal, openModal } from './ui.js'
+import { getPaletteFallbackByIndex, normalizeTeamColors } from './team-colors.js'
+
+function getMatchTeamColors(match, teamKey) {
+  const fallback = teamKey === 'A' ? getPaletteFallbackByIndex(0) : getPaletteFallbackByIndex(1)
+  return normalizeTeamColors(teamKey === 'A' ? match.teamAColors : match.teamBColors, fallback)
+}
 
 export function saveMatchToHistory() {
   const { pointsA, pointsB, gamesA, gamesB } = state.score
@@ -17,6 +23,14 @@ export function saveMatchToHistory() {
   state.matchHistory.unshift({
     teamA: state.teamNames.A,
     teamB: state.teamNames.B,
+    teamAColors: normalizeTeamColors(
+      state.teamPresets.find(preset => preset.id === state.teamSelection.A)?.colors,
+      getPaletteFallbackByIndex(0)
+    ),
+    teamBColors: normalizeTeamColors(
+      state.teamPresets.find(preset => preset.id === state.teamSelection.B)?.colors,
+      getPaletteFallbackByIndex(1)
+    ),
     gamesA,
     gamesB,
     winner: winnerKey,
@@ -41,19 +55,24 @@ export function renderHistory(refs) {
 
   state.matchHistory.forEach(match => {
     const formatted = new Date(match.date).toLocaleString()
-    const winnerColor =
-      match.winner === 'A' ? 'text-primary' : 'text-accent-orange'
+    const teamAColors = getMatchTeamColors(match, 'A')
+    const teamBColors = getMatchTeamColors(match, 'B')
+    const winnerColor = match.winner === 'A' ? teamAColors.primary : teamBColors.primary
 
     refs.historyList.innerHTML += `
       <div class="bg-white/5 rounded-xl p-3 space-y-1">
         <div class="flex justify-between text-sm font-bold">
-          <span class="${winnerColor}">
-            ${match.winner === 'A' ? match.teamA : match.teamB}
+          <span style="color:${winnerColor};">
+            🏆 ${match.winner === 'A' ? match.teamA : match.teamB}
           </span>
           <span class="opacity-60">${match.gamesA} x ${match.gamesB}</span>
         </div>
 
-        <div class="text-xs opacity-50">${match.teamA} x ${match.teamB}</div>
+        <div class="text-xs opacity-70 flex items-center gap-2">
+          <span style="color:${teamAColors.primary};">${match.teamA}</span>
+          <span class="opacity-40">x</span>
+          <span style="color:${teamBColors.primary};">${match.teamB}</span>
+        </div>
         <div class="text-[10px] opacity-40">${formatted}</div>
       </div>
     `
@@ -150,8 +169,10 @@ export async function exportHistoryImage(refs) {
   ctx.stroke()
 
   state.matchHistory.slice(0, 8).forEach((match, index) => {
+    const teamAColors = getMatchTeamColors(match, 'A')
+    const teamBColors = getMatchTeamColors(match, 'B')
+    const winnerColors = match.winner === 'A' ? teamAColors : teamBColors
     const y = 360 + index * 190
-    const isTeamA = match.winner === 'A'
     const cardTop = y - 75
     const blockTop = cardTop + 22
 
@@ -162,8 +183,8 @@ export async function exportHistoryImage(refs) {
     ctx.textAlign = 'left'
     ctx.textBaseline = 'top'
     ctx.font = "700 36px 'Spline Sans', sans-serif"
-    ctx.fillStyle = isTeamA ? '#17cfcf' : '#FC5D24'
-    ctx.fillText(`🏆 ${isTeamA ? match.teamA : match.teamB}`, 160, blockTop)
+    ctx.fillStyle = winnerColors.primary
+    ctx.fillText(`🏆 ${match.winner === 'A' ? match.teamA : match.teamB}`, 160, blockTop)
 
     ctx.textAlign = 'right'
     ctx.font = "800 36px 'Spline Sans', sans-serif"
@@ -171,9 +192,19 @@ export async function exportHistoryImage(refs) {
     ctx.fillText(`${match.gamesA} x ${match.gamesB}`, width - 160, blockTop)
 
     ctx.textAlign = 'left'
-    ctx.font = "500 26px 'Spline Sans', sans-serif"
-    ctx.fillStyle = 'rgba(255,255,255,0.55)'
-    ctx.fillText(`${match.teamA} x ${match.teamB}`, 160, blockTop + 44)
+    ctx.font = "600 24px 'Spline Sans', sans-serif"
+    ctx.fillStyle = teamAColors.primary
+    ctx.fillText(match.teamA, 160, blockTop + 48)
+    const teamAWidth = ctx.measureText(match.teamA).width
+
+    ctx.font = "500 22px 'Spline Sans', sans-serif"
+    ctx.fillStyle = 'rgba(255,255,255,0.45)'
+    ctx.fillText('x', 160 + teamAWidth + 12, blockTop + 50)
+
+    const separatorX = 160 + teamAWidth + 34
+    ctx.font = "600 24px 'Spline Sans', sans-serif"
+    ctx.fillStyle = teamBColors.primary
+    ctx.fillText(match.teamB, separatorX, blockTop + 48)
 
     ctx.font = "500 22px 'Spline Sans', sans-serif"
     ctx.fillStyle = 'rgba(255,255,255,0.35)'

@@ -10,6 +10,7 @@ import {
   syncTeamNamesFromSelection
 } from './storage.js'
 import {
+  applyMatchTeamTheme,
   applyGamesToggleUI,
   closeModal,
   getRefs,
@@ -18,6 +19,12 @@ import {
   updateScoreUI,
   updateTeamNamesUI
 } from './ui.js'
+import {
+  TEAM_COLOR_PALETTES,
+  getPaletteById,
+  getPaletteFallbackByIndex,
+  normalizeTeamColors
+} from './team-colors.js'
 import {
   closeClearHistoryModal,
   closeHistory,
@@ -36,6 +43,11 @@ import {
 } from './install.js'
 
 const refs = getRefs()
+const newTeamPaletteSelection = {
+  manager: null,
+  picker: null
+}
+let activeNewTeamPaletteSource = null
 
 async function syncAppVersionLabel() {
   if (!refs.appVersionLabel) return
@@ -64,7 +76,8 @@ function persistAndUpdateScore() {
 
 function parseEditedGamesValue(rawValue, maxAllowed) {
   const parsed = Number(rawValue.trim())
-  if (!Number.isInteger(parsed) || parsed < 0 || parsed > maxAllowed) return null
+  if (!Number.isInteger(parsed) || parsed < 0 || parsed > maxAllowed)
+    return null
   return parsed
 }
 
@@ -91,7 +104,9 @@ function editGamesScore(team) {
   const parsedValue = parseEditedGamesValue(rawValue, maxAllowed)
 
   if (parsedValue === null) {
-    window.alert(`Valor inválido para games. Use um número inteiro entre 0 e ${maxAllowed}.`)
+    window.alert(
+      `Valor inválido para games. Use um número inteiro entre 0 e ${maxAllowed}.`
+    )
     return
   }
 
@@ -102,6 +117,177 @@ function editGamesScore(team) {
 
 function getPresetById(presetId) {
   return state.teamPresets.find(preset => preset.id === presetId) || null
+}
+
+function getPresetColors(preset) {
+  if (!preset) return getPaletteFallbackByIndex(0)
+  const fallback =
+    preset.id === 'default-a'
+      ? getPaletteFallbackByIndex(0)
+      : preset.id === 'default-b'
+        ? getPaletteFallbackByIndex(1)
+        : getPaletteFallbackByIndex(2)
+  return normalizeTeamColors(preset.colors, fallback)
+}
+
+function getUsedPaletteIds(excludedPresetId = null) {
+  return new Set(
+    state.teamPresets
+      .filter(preset => preset.id !== excludedPresetId)
+      .map(preset => getPresetColors(preset).paletteId)
+      .filter(Boolean)
+  )
+}
+
+function getFirstAvailablePaletteId(excludedPresetId = null) {
+  const usedPaletteIds = getUsedPaletteIds(excludedPresetId)
+  return (
+    TEAM_COLOR_PALETTES.find(palette => !usedPaletteIds.has(palette.id))?.id ||
+    null
+  )
+}
+
+function renderPaletteSwatches(colors) {
+  return `
+    <span class="palette-swatch-wrap">
+      <span class="palette-swatch" style="background:${colors.primary};"></span>
+    </span>
+  `
+}
+
+function renderPaletteButtons({
+  selectedPaletteId,
+  excludedPresetId = null,
+  getOnClick
+}) {
+  const usedPaletteIds = getUsedPaletteIds(excludedPresetId)
+
+  return TEAM_COLOR_PALETTES.map(palette => {
+    const isUsed = usedPaletteIds.has(palette.id)
+    const isSelected = selectedPaletteId === palette.id
+    const isDisabled = !isSelected && isUsed
+    const disabledAttr = isDisabled ? 'disabled' : ''
+    const selectedClass = isSelected
+      ? 'palette-option-btn--selected'
+      : isDisabled
+        ? 'palette-option-btn--disabled'
+        : ''
+    const colors = normalizeTeamColors({ paletteId: palette.id })
+
+    return `
+      <button
+        type="button"
+        onclick="${getOnClick(palette.id)}"
+        class="palette-option-btn ${selectedClass}"
+        ${disabledAttr}
+        aria-label="${palette.label}${isDisabled ? ' indisponivel' : ''}"
+        title="${palette.label}${isDisabled ? ' (em uso)' : ''}"
+      >
+        ${renderPaletteSwatches(colors)}
+      </button>
+    `
+  }).join('')
+}
+
+function renderNewTeamPalettePicker(source) {
+  const container =
+    source === 'manager'
+      ? refs.newTeamPaletteOptions
+      : refs.teamPickerNewTeamPaletteOptions
+  if (!container) return
+
+  const selectedPaletteId = newTeamPaletteSelection[source]
+  const selectedColors = normalizeTeamColors({ paletteId: selectedPaletteId })
+
+  container.innerHTML = `
+    <button
+      type="button"
+      onclick="openNewTeamPaletteModal('${source}')"
+      class="palette-menu-trigger"
+      aria-label="Abrir seleção de cor"
+    >
+      <span class="palette-menu-trigger-content">
+        ${renderPaletteSwatches(selectedColors)}
+      </span>
+    </button>
+  `
+}
+
+function ensureNewTeamPaletteSelection(source) {
+  const selectedPaletteId = newTeamPaletteSelection[source]
+  const usedPaletteIds = getUsedPaletteIds()
+
+  if (
+    selectedPaletteId &&
+    getPaletteById(selectedPaletteId) &&
+    !usedPaletteIds.has(selectedPaletteId)
+  ) {
+    return
+  }
+
+  newTeamPaletteSelection[source] = getFirstAvailablePaletteId()
+}
+
+function refreshNewTeamPaletteSelects() {
+  ensureNewTeamPaletteSelection('manager')
+  ensureNewTeamPaletteSelection('picker')
+  renderNewTeamPalettePicker('manager')
+  renderNewTeamPalettePicker('picker')
+}
+
+function renderNewTeamPaletteModal() {
+  if (!activeNewTeamPaletteSource || !refs.newTeamPaletteModalList) return
+
+  const selectedPaletteId = newTeamPaletteSelection[activeNewTeamPaletteSource]
+  refs.newTeamPaletteModalTitle.textContent = 'Selecionar Cor do Time'
+  refs.newTeamPaletteModalList.innerHTML = renderPaletteButtons({
+    selectedPaletteId,
+    getOnClick: paletteId =>
+      `selectNewTeamPalette('${activeNewTeamPaletteSource}', '${paletteId}')`
+  })
+}
+
+function openNewTeamPaletteModal(source) {
+  activeNewTeamPaletteSource = source
+  renderNewTeamPaletteModal()
+  openModal('newTeamPaletteModal')
+}
+
+function closeNewTeamPaletteModal() {
+  activeNewTeamPaletteSource = null
+  closeModal('newTeamPaletteModal')
+}
+
+function selectNewTeamPalette(source, paletteId) {
+  const usedPaletteIds = getUsedPaletteIds()
+  if (usedPaletteIds.has(paletteId)) return
+
+  newTeamPaletteSelection[source] = paletteId
+  renderNewTeamPalettePicker('manager')
+  renderNewTeamPalettePicker('picker')
+  closeNewTeamPaletteModal()
+}
+
+function updatePresetPalette(presetId, paletteId) {
+  const preset = getPresetById(presetId)
+  const palette = getPaletteById(paletteId)
+  if (!preset || !palette) return false
+
+  const paletteUsedByOtherTeam = state.teamPresets.some(item => {
+    if (item.id === presetId) return false
+    return getPresetColors(item).paletteId === paletteId
+  })
+
+  if (paletteUsedByOtherTeam) {
+    window.alert('Essa paleta ja esta sendo usada por outro time.')
+    return false
+  }
+
+  preset.colors = normalizeTeamColors({ paletteId })
+  persistTeamsAndUI()
+  renderTeamPresetsManager()
+  renderTeamPickerOptions()
+  return true
 }
 
 function getSafeFallbackPresetId(blockedPresetId) {
@@ -125,11 +311,13 @@ function escapeHtml(value) {
 function syncTeamSelectionUI() {
   syncTeamNamesFromSelection()
   updateTeamNamesUI(refs)
+  applyMatchTeamTheme(refs)
 }
 
 function persistTeamsAndUI() {
   syncTeamSelectionUI()
   saveTeams()
+  refreshNewTeamPaletteSelects()
 }
 
 function getPresetsForDisplay() {
@@ -158,14 +346,34 @@ function renderTeamPresetsManager() {
       const deleteButton = preset.locked
         ? '<span class="text-[10px] uppercase tracking-widest opacity-35">Padrão</span>'
         : `<button onclick="deleteTeamPreset('${preset.id}')" class="text-[10px] uppercase tracking-widest text-accent-orange opacity-80 hover:opacity-100">Excluir</button>`
+      const colors = getPresetColors(preset)
+      const paletteOptions = `
+        <div class="palette-options">
+          ${renderPaletteButtons({
+            selectedPaletteId: colors.paletteId,
+            excludedPresetId: preset.id,
+            getOnClick: paletteId =>
+              `changeTeamPalette('${preset.id}', '${paletteId}')`
+          })}
+        </div>
+      `
 
       return `
-        <div class="bg-white/5 border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between gap-3">
-          <div class="min-w-0">
+        <div class="bg-white/5 border border-white/10 rounded-xl px-3 py-2 space-y-2">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
             <p class="text-sm font-semibold break-words leading-snug">${escapeHtml(preset.name)}</p>
-            ${selectedTag}
+              <div class="flex items-center gap-2 mt-1">
+                ${renderPaletteSwatches(colors)}
+                ${selectedTag}
+              </div>
+            </div>
+            <div class="shrink-0">${deleteButton}</div>
           </div>
-          <div class="shrink-0">${deleteButton}</div>
+          <div>
+            <p class="text-[10px] uppercase tracking-widest opacity-45 mb-1">Paleta do time</p>
+            ${paletteOptions}
+          </div>
         </div>
       `
     })
@@ -173,7 +381,8 @@ function renderTeamPresetsManager() {
 }
 
 function renderTeamPickerOptions() {
-  if (!refs.teamPickerList || !refs.teamPickerTitle || !state.activeTeamPicker) return
+  if (!refs.teamPickerList || !refs.teamPickerTitle || !state.activeTeamPicker)
+    return
 
   const teamKey = state.activeTeamPicker
   const otherTeamKey = teamKey === 'A' ? 'B' : 'A'
@@ -186,9 +395,10 @@ function renderTeamPickerOptions() {
       const isCurrent = state.teamSelection[teamKey] === preset.id
       const isBlocked = selectedOtherPresetId === preset.id
       const canDelete = !preset.locked
+      const colors = getPresetColors(preset)
 
       return `
-        <div class="rounded-xl border px-3 py-3 transition ${isCurrent ? 'border-primary bg-primary/10' : 'border-white/10 bg-white/5'}">
+        <div class="rounded-xl border px-3 py-3 transition ${isCurrent ? 'border-white/30 bg-white/10' : 'border-white/10 bg-white/5'}">
           <div class="flex items-center gap-2">
             <button
               onclick="selectTeamPreset('${preset.id}')"
@@ -196,8 +406,11 @@ function renderTeamPickerOptions() {
               ${isBlocked ? 'disabled' : ''}
             >
               <div class="flex items-center justify-between gap-3">
-                <span class="text-sm font-semibold break-words leading-snug">${escapeHtml(preset.name)}</span>
-                <span class="text-[10px] uppercase tracking-widest opacity-60 shrink-0">${isCurrent ? 'Selecionado' : isBlocked ? 'Em uso no outro time' : 'Selecionar'}</span>
+                <span class="text-sm font-semibold break-words leading-snug flex items-center gap-2">
+                  ${renderPaletteSwatches(colors)}
+                  ${escapeHtml(preset.name)}
+                </span>
+                <span class="text-[10px] uppercase tracking-widest opacity-60 shrink-0">${isCurrent ? 'Selecionado' : isBlocked ? 'Em uso' : 'Selecionar'}</span>
               </div>
             </button>
             ${canDelete ? `<button onclick="deleteTeamPresetFromPicker('${preset.id}')" aria-label="Excluir time" class="h-8 w-8 rounded-lg bg-white/5 hover:bg-white/10 text-accent-orange flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">delete</span></button>` : ''}
@@ -208,7 +421,7 @@ function renderTeamPickerOptions() {
     .join('')
 }
 
-function addTeamPresetFromInput(input) {
+function addTeamPresetFromInput(input, source) {
   const value = input?.value.trim() || ''
   if (!value) return
 
@@ -221,10 +434,19 @@ function addTeamPresetFromInput(input) {
     return
   }
 
+  const paletteId = newTeamPaletteSelection[source]
+  if (!paletteId) {
+    window.alert(
+      'Todas as paletas disponiveis ja estao em uso. Exclua um time ou troque uma paleta antes de criar outro.'
+    )
+    return
+  }
+
   state.teamPresets.push({
     id: `team-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     name: value,
-    locked: false
+    locked: false,
+    colors: normalizeTeamColors({ paletteId }, getPaletteFallbackByIndex(2))
   })
 
   if (refs.newTeamPresetInput) refs.newTeamPresetInput.value = ''
@@ -235,11 +457,15 @@ function addTeamPresetFromInput(input) {
 }
 
 function addTeamPreset() {
-  addTeamPresetFromInput(refs.newTeamPresetInput)
+  addTeamPresetFromInput(refs.newTeamPresetInput, 'manager')
 }
 
 function addTeamPresetFromPicker() {
-  addTeamPresetFromInput(refs.teamPickerNewTeamInput)
+  addTeamPresetFromInput(refs.teamPickerNewTeamInput, 'picker')
+}
+
+function changeTeamPalette(presetId, paletteId) {
+  updatePresetPalette(presetId, paletteId)
 }
 
 function deleteTeamPreset(presetId) {
@@ -270,6 +496,9 @@ function deleteTeamPresetFromPicker(presetId) {
 }
 
 function openTeamsManager() {
+  if (refs.newTeamPresetInput) refs.newTeamPresetInput.value = ''
+  activeNewTeamPaletteSource = null
+  refreshNewTeamPaletteSelects()
   renderTeamPresetsManager()
   openModal('teamsManagerModal')
 }
@@ -283,6 +512,8 @@ function openTeamPicker(teamKey) {
   if (refs.teamPickerNewTeamInput) {
     refs.teamPickerNewTeamInput.value = ''
   }
+  activeNewTeamPaletteSource = null
+  refreshNewTeamPaletteSelects()
   renderTeamPickerOptions()
   openModal('teamPickerModal')
 }
@@ -463,6 +694,10 @@ function exposeGlobals() {
   window.closeTeamPicker = closeTeamPicker
   window.addTeamPreset = addTeamPreset
   window.addTeamPresetFromPicker = addTeamPresetFromPicker
+  window.openNewTeamPaletteModal = openNewTeamPaletteModal
+  window.closeNewTeamPaletteModal = closeNewTeamPaletteModal
+  window.selectNewTeamPalette = selectNewTeamPalette
+  window.changeTeamPalette = changeTeamPalette
   window.deleteTeamPreset = deleteTeamPreset
   window.deleteTeamPresetFromPicker = deleteTeamPresetFromPicker
   window.selectTeamPreset = selectTeamPreset
@@ -493,6 +728,8 @@ function boot() {
 
   syncSettingsUI()
   updateTeamNamesUI(refs)
+  applyMatchTeamTheme(refs)
+  refreshNewTeamPaletteSelects()
   updateScoreUI(refs)
 
   bindTeamManagerInput()

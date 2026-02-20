@@ -58,7 +58,7 @@
           @apply flex-1 bg-card-dark rounded-3xl p-6 flex flex-col items-center border-b-4 transition-all;
         }
         .team-name-label {
-          @apply text-xs uppercase font-bold focus:outline-none relative;
+          @apply text-xs uppercase font-bold focus:outline-none relative text-center;
         }
         .team-name-label::after {
           content: '';
@@ -154,8 +154,10 @@
 
       <!-- Título (ocupa 2 colunas) -->
       <div class="col-span-2 text-center">
-        <h1 class="font-black uppercase tracking-tight">Beach Tennis Placar</h1>
-        <span class="text-primary text-xs tracking-widest">PLACAR</span>
+        <h1 class="font-black uppercase tracking-tight">Beach Tennis</h1>
+        <span id="appSubtitle" class="text-primary text-xs tracking-widest"
+          >PLACAR</span
+        >
       </div>
 
       <!-- Configurações -->
@@ -170,6 +172,7 @@
       <section class="px-6 py-4">
         <div class="games-panel">
           <h3
+            id="gamesPanelTitle"
             class="text-primary text-xs font-bold tracking-[0.3em] uppercase mb-3"
           >
             Pontuação dos Games
@@ -235,7 +238,7 @@
         <h4 class="section-title">Pontuação da Partida</h4>
 
         <div class="flex gap-3">
-          <div id="cardA" class="score-card border-primary">
+          <div id="cardA" class="score-card">
             <span
               id="teamNameA"
               role="button"
@@ -247,7 +250,7 @@
                   openTeamPicker('A')
                 }
               "
-              class="team-name-label text-primary cursor-pointer"
+              class="team-name-label cursor-pointer"
             >
               Time A
             </span>
@@ -262,7 +265,7 @@
             </div>
           </div>
 
-          <div id="cardB" class="score-card border-accent-orange">
+          <div id="cardB" class="score-card">
             <span
               id="teamNameB"
               role="button"
@@ -274,7 +277,7 @@
                   openTeamPicker('B')
                 }
               "
-              class="team-name-label text-accent-orange cursor-pointer"
+              class="team-name-label cursor-pointer"
             >
               Time B
             </span>
@@ -296,8 +299,9 @@
         <div class="grid grid-cols-2 gap-6">
           <div class="flex flex-col gap-3">
             <button
+              id="addPointBtnA"
               onclick="addPoint('A')"
-              class="point-action bg-primary text-background-dark shadow-primary/20"
+              class="point-action"
             >
               <span class="material-symbols-outlined text-5xl font-bold"
                 >add</span
@@ -310,8 +314,9 @@
 
           <div class="flex flex-col gap-3">
             <button
+              id="addPointBtnB"
               onclick="addPoint('B')"
-              class="point-action bg-accent-orange text-white shadow-accent-orange/20"
+              class="point-action"
             >
               <span class="material-symbols-outlined text-5xl font-bold"
                 >add</span
@@ -434,6 +439,7 @@
               class="form-control !mt-0"
               maxlength="40"
             />
+            <div id="newTeamPaletteOptions" class="palette-options"></div>
             <button
               onclick="addTeamPreset()"
               class="modal-primary-btn !w-auto px-4"
@@ -477,6 +483,10 @@
               class="form-control !mt-0"
               maxlength="40"
             />
+            <div
+              id="teamPickerNewTeamPaletteOptions"
+              class="palette-options"
+            ></div>
             <button
               onclick="addTeamPresetFromPicker()"
               class="modal-primary-btn !w-auto px-4"
@@ -489,6 +499,32 @@
         <div
           id="teamPickerList"
           class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"
+        ></div>
+      </div>
+    </div>
+
+    <div
+      id="newTeamPaletteModal"
+      onclick="closeNewTeamPaletteModal()"
+      class="modal-overlay bg-black/60"
+    >
+      <div class="modal-card modal-content" onclick="event.stopPropagation()">
+        <div class="relative">
+          <h2 id="newTeamPaletteModalTitle" class="modal-title">
+            Selecionar Cor
+          </h2>
+          <button
+            onclick="closeNewTeamPaletteModal()"
+            aria-label="Fechar seleção de cor"
+            class="modal-close-button"
+          >
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+
+        <div
+          id="newTeamPaletteModalList"
+          class="palette-modal-grid max-h-[50vh] overflow-y-auto pr-1"
         ></div>
       </div>
     </div>

@@ -3,6 +3,13 @@
   user-select: none;
 }
 
+:root {
+  --team-a-primary: #00C2FF;
+  --team-b-primary: #FF7A00;
+  --team-a-contrast: #111418;
+  --team-b-contrast: #111418;
+}
+
 html, body {
   touch-action: manipulation;
 }
@@ -20,7 +27,7 @@ select {
 
 
 .leading {
-  box-shadow: 0 0 25px rgba(23, 207, 207, 0.25);
+  box-shadow: 0 0 25px var(--leading-glow, rgba(23, 207, 207, 0.25));
 }
 
 .progressA,
@@ -31,6 +38,95 @@ select {
 .progressA.active,
 .progressB.active {
   transform: scaleX(1.05);
+}
+
+.team-palette-select {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.team-palette-select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.palette-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.palette-menu-trigger {
+  width: 100%;
+  height: 3rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.65rem;
+}
+
+.palette-menu-trigger-content {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.palette-modal-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.palette-option-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.palette-option-btn:active {
+  transform: scale(0.96);
+}
+
+.palette-option-btn--selected {
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.palette-option-btn--disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.palette-swatch-wrap {
+  position: relative;
+  width: 1.2rem;
+  height: 1.2rem;
+  display: inline-block;
+}
+
+.palette-swatch {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  display: block;
 }
 
 main {

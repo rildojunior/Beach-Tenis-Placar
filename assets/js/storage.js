@@ -1,8 +1,23 @@
 import { state } from './state.js'
+import {
+  TEAM_COLOR_PALETTES,
+  getPaletteFallbackByIndex,
+  normalizeTeamColors
+} from './team-colors.js'
 
 const DEFAULT_TEAM_PRESETS = [
-  { id: 'default-a', name: 'Time A', locked: true },
-  { id: 'default-b', name: 'Time B', locked: true }
+  {
+    id: 'default-a',
+    name: 'Time A',
+    locked: true,
+    colors: getPaletteFallbackByIndex(0)
+  },
+  {
+    id: 'default-b',
+    name: 'Time B',
+    locked: true,
+    colors: getPaletteFallbackByIndex(1)
+  }
 ]
 
 function safeParse(value, fallback) {
@@ -68,17 +83,37 @@ export function saveSettings() {
   localStorage.setItem('bt-settings', JSON.stringify(state.settings))
 }
 
-function normalizePreset(rawPreset) {
+function getFirstFreePaletteId(blockedPaletteIds) {
+  return TEAM_COLOR_PALETTES.find(palette => !blockedPaletteIds.has(palette.id))?.id || null
+}
+
+function normalizePreset(rawPreset, usedPaletteIds) {
   if (!rawPreset || typeof rawPreset !== 'object') return null
 
   const id = typeof rawPreset.id === 'string' ? rawPreset.id.trim() : ''
   const name = typeof rawPreset.name === 'string' ? rawPreset.name.trim() : ''
   if (!id || !name) return null
 
+  const defaultFallback =
+    id === 'default-a' ? getPaletteFallbackByIndex(0) : getPaletteFallbackByIndex(1)
+  const normalized = normalizeTeamColors(rawPreset.colors, defaultFallback)
+
+  let paletteId = normalized.paletteId
+  if (!paletteId || usedPaletteIds.has(paletteId)) {
+    const nextPaletteId = getFirstFreePaletteId(usedPaletteIds)
+    paletteId = nextPaletteId
+  }
+
+  const colors = paletteId
+    ? normalizeTeamColors({ paletteId }, defaultFallback)
+    : normalized
+  if (colors.paletteId) usedPaletteIds.add(colors.paletteId)
+
   return {
     id,
     name,
-    locked: id === 'default-a' || id === 'default-b'
+    locked: id === 'default-a' || id === 'default-b',
+    colors
   }
 }
 
@@ -96,14 +131,42 @@ function mergeDefaultPresets(presets) {
   return [...byId.values()]
 }
 
+function ensureUniquePresetColors(presets) {
+  const usedPaletteIds = new Set()
+
+  return presets.map((preset, index) => {
+    const defaultFallback =
+      preset.id === 'default-a'
+        ? getPaletteFallbackByIndex(0)
+        : preset.id === 'default-b'
+          ? getPaletteFallbackByIndex(1)
+          : getPaletteFallbackByIndex(index + 2)
+    const normalized = normalizeTeamColors(preset.colors, defaultFallback)
+
+    if (normalized.paletteId && !usedPaletteIds.has(normalized.paletteId)) {
+      usedPaletteIds.add(normalized.paletteId)
+      return { ...preset, colors: normalized }
+    }
+
+    const nextPaletteId = getFirstFreePaletteId(usedPaletteIds)
+    const nextColors = nextPaletteId
+      ? normalizeTeamColors({ paletteId: nextPaletteId }, defaultFallback)
+      : normalized
+
+    if (nextColors.paletteId) usedPaletteIds.add(nextColors.paletteId)
+    return { ...preset, colors: nextColors }
+  })
+}
+
 export function loadTeams() {
   const saved = safeParse(localStorage.getItem('bt-teams'), null)
 
   if (saved && Array.isArray(saved.presets)) {
+    const usedPaletteIds = new Set()
     const normalizedPresets = saved.presets
-      .map(normalizePreset)
+      .map(preset => normalizePreset(preset, usedPaletteIds))
       .filter(Boolean)
-    const presets = mergeDefaultPresets(normalizedPresets)
+    const presets = ensureUniquePresetColors(mergeDefaultPresets(normalizedPresets))
 
     state.teamPresets = presets
 
@@ -146,13 +209,23 @@ export function loadTeams() {
 
     if (legacyA && legacyA !== 'Time A') {
       const idA = `team-${Date.now()}-a`
-      presets.push({ id: idA, name: legacyA, locked: false })
+      presets.push({
+        id: idA,
+        name: legacyA,
+        locked: false,
+        colors: getPaletteFallbackByIndex(2)
+      })
       selectionA = idA
     }
 
     if (legacyB && legacyB !== 'Time B') {
       const idB = `team-${Date.now()}-b`
-      presets.push({ id: idB, name: legacyB, locked: false })
+      presets.push({
+        id: idB,
+        name: legacyB,
+        locked: false,
+        colors: getPaletteFallbackByIndex(3)
+      })
       selectionB = idB
     }
 
@@ -160,7 +233,7 @@ export function loadTeams() {
       selectionB = 'default-b'
     }
 
-    state.teamPresets = presets
+    state.teamPresets = ensureUniquePresetColors(presets)
     state.teamSelection = { A: selectionA, B: selectionB }
     syncTeamNamesFromSelection()
     saveTeams()
@@ -168,7 +241,7 @@ export function loadTeams() {
     return
   }
 
-  state.teamPresets = [...DEFAULT_TEAM_PRESETS]
+  state.teamPresets = ensureUniquePresetColors([...DEFAULT_TEAM_PRESETS])
   state.teamSelection = { A: 'default-a', B: 'default-b' }
   syncTeamNamesFromSelection()
   saveTeams()
@@ -255,6 +328,8 @@ export function loadHistory() {
         teamA: typeof match.teamA === 'string' ? match.teamA : 'Time A',
         teamB: typeof match.teamB === 'string' ? match.teamB : 'Time B',
         winner: match.winner === 'B' ? 'B' : 'A',
+        teamAColors: normalizeTeamColors(match.teamAColors, getPaletteFallbackByIndex(0)),
+        teamBColors: normalizeTeamColors(match.teamBColors, getPaletteFallbackByIndex(1)),
         date:
           typeof match.date === 'string'
             ? match.date
@@ -281,6 +356,7 @@ export function loadHistory() {
       if (typeof match.gamesB === 'number') normalized.gamesB = match.gamesB
       if (typeof normalized.gamesA !== 'number') normalized.gamesA = 0
       if (typeof normalized.gamesB !== 'number') normalized.gamesB = 0
+      if (!match.teamAColors || !match.teamBColors) hasLegacyKeys = true
 
       return normalized
     })

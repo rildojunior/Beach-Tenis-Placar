@@ -1,13 +1,29 @@
 export const state = {
   settings: {
-    scoringMode: 'simplified',
+    scoringMode: 'official',
     gamesEnabled: false,
     gamesToWin: 3
   },
   matchHistory: [],
   teamPresets: [
-    { id: 'default-a', name: 'Time A', locked: true },
-    { id: 'default-b', name: 'Time B', locked: true }
+    {
+      id: 'default-a',
+      name: 'Time A',
+      locked: true,
+      colors: {
+        paletteId: 'cyan',
+        primary: '#00C2FF'
+      }
+    },
+    {
+      id: 'default-b',
+      name: 'Time B',
+      locked: true,
+      colors: {
+        paletteId: 'orange',
+        primary: '#FF7A00'
+      }
+    }
   ],
   teamSelection: {
     A: 'default-a',

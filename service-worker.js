@@ -1,6 +1,6 @@
 // Alterar SOMENTE este valor a cada deploy (ex: v2026.02.09-1, v2026.02.10-1).
 // Isso força o navegador a instalar a nova versão do Service Worker.
-const SW_VERSION = 'v2026.02.19-1'
+const SW_VERSION = 'v2026.02.20-9'
 
 const APP_CACHE_PREFIX = `btp-app-${SW_VERSION}-`
 const RUNTIME_CACHE_PREFIX = `btp-runtime-${SW_VERSION}-`
@@ -15,6 +15,7 @@ const APP_SHELL_FILES = [
   './assets/js/app.js',
   './assets/js/state.js',
   './assets/js/storage.js',
+  './assets/js/team-colors.js',
   './assets/js/ui.js',
   './assets/js/history.js',
   './assets/js/install.js'
@@ -27,6 +28,7 @@ const HASH_SOURCE_FILES = [
   './assets/js/app.js',
   './assets/js/state.js',
   './assets/js/storage.js',
+  './assets/js/team-colors.js',
   './assets/js/ui.js',
   './assets/js/history.js',
   './assets/js/install.js'
