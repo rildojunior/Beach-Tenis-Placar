@@ -719,6 +719,31 @@ function exposeGlobals() {
   window.editGamesScore = editGamesScore
 }
 
+let wakeLock = null
+
+async function requestWakeLock() {
+  if (!('wakeLock' in navigator)) return
+  try {
+    wakeLock = await navigator.wakeLock.request('screen')
+  } catch {
+    // silently ignore — permissão negada ou não suportado
+  }
+}
+
+async function releaseWakeLock() {
+  if (!wakeLock) return
+  await wakeLock.release()
+  wakeLock = null
+}
+
+function setupWakeLock() {
+  requestWakeLock()
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') requestWakeLock()
+    else releaseWakeLock()
+  })
+}
+
 function boot() {
   syncAppVersionLabel()
 
@@ -736,6 +761,7 @@ function boot() {
   bindTeamManagerInput()
   setupInstall(refs)
   registerServiceWorker()
+  setupWakeLock()
 
   document.addEventListener('touchend', handleTouchEnd, { passive: false })
 
