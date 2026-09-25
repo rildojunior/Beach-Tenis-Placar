@@ -35,7 +35,7 @@
                 class="size-3.5 shrink-0 rounded-full"
                 style:background={colors.primary}
               ></span>
-              <span class="min-w-0 flex-1 truncate">{preset.name}</span>
+              <span class="line-clamp-2 min-w-0 flex-1 break-words">{preset.name}</span>
               {#if isPlaying(preset.id)}
                 <span class="text-[0.8125rem] text-label-2">Jogando</span>
               {/if}

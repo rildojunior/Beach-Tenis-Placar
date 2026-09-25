@@ -5,6 +5,7 @@
   import { teams } from '../stores/teams.svelte'
   import { ui } from '../stores/ui.svelte'
   import RollingNumber from './ui/RollingNumber.svelte'
+  import TeamName from './ui/TeamName.svelte'
 
   let { team }: { team: TeamKey } = $props()
 
@@ -19,13 +20,13 @@
     class="team-chip"
     aria-label="Trocar {teams.names[team]}"
   >
-    <span class="truncate">{teams.names[team]}</span>
+    <TeamName name={teams.names[team]} />
     <span class="material-symbols-outlined -mr-1 text-[1rem]!" aria-hidden="true"
       >expand_more</span
     >
   </button>
 
-  <div class="flex flex-1 items-center justify-center py-2">
+  <div class="flex items-center justify-center py-2">
     <span class="display-number text-[5.5rem] font-bold" aria-live="polite">
       <RollingNumber value={match.display[team]} direction={match.lastDelta} />
     </span>

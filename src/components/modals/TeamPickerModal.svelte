@@ -41,7 +41,7 @@
               class="size-3.5 shrink-0 rounded-full"
               style:background={presetColors(preset).primary}
             ></span>
-            <span class="min-w-0 flex-1 truncate">{preset.name}</span>
+            <span class="line-clamp-2 min-w-0 flex-1 break-words">{preset.name}</span>
             {#if current}
               <span class="material-symbols-outlined text-[1.375rem]! text-primary"
                 >check</span

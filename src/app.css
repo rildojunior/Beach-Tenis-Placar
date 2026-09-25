@@ -155,8 +155,20 @@
     @apply rounded-[1.375rem] bg-card-dark;
   }
 
+  /*
+   * Os dois cards dividem as mesmas linhas (subgrid): se um nome ocupa duas
+   * linhas, a linha do nome cresce nos dois e os números continuam alinhados.
+   */
+  .score-grid {
+    @apply grid grid-cols-2 gap-x-3 gap-y-3;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto 1fr auto;
+  }
   .score-card {
-    @apply rounded-[1.375rem] bg-card-dark flex flex-1 flex-col items-center gap-3 px-3 pt-4 pb-5;
+    @apply grid min-w-0 justify-items-center rounded-[1.375rem] bg-card-dark px-3 pt-4 pb-5;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    align-items: center;
     transition: box-shadow var(--spring-duration) var(--ease-spring);
   }
   .score-card.leading {
@@ -165,7 +177,7 @@
       0 16px 48px -12px color-mix(in srgb, var(--team) 55%, transparent);
   }
   .team-chip {
-    @apply flex max-w-full items-center gap-1 rounded-full px-2.5 py-1 text-[0.8125rem] font-semibold;
+    @apply flex max-w-full min-w-0 items-center gap-1 rounded-[0.875rem] px-2.5 py-1 text-[0.8125rem] leading-tight font-semibold;
     background: color-mix(in srgb, var(--team) 16%, transparent);
     color: var(--team);
   }
@@ -368,6 +380,11 @@
   }
   .palette-swatch {
     @apply inline-block size-3 shrink-0 rounded-full;
+  }
+
+  /* ----- Nome do time (uma dupla por linha) ----- */
+  .team-name {
+    @apply flex max-w-full min-w-0 flex-col text-center;
   }
 
   /* ----- Número que rola ao mudar ----- */

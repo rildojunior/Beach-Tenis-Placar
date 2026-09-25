@@ -57,10 +57,13 @@
               aria-hidden="true">trophy</span
             >
             <div class="min-w-0 flex-1">
-              <p class="truncate font-semibold" style:color={winnerColors.primary}>
+              <p
+                class="line-clamp-2 font-semibold break-words"
+                style:color={winnerColors.primary}
+              >
                 {item.winner === 'A' ? item.teamA : item.teamB}
               </p>
-              <p class="truncate text-[0.8125rem] text-label-2">
+              <p class="line-clamp-2 text-[0.8125rem] break-words text-label-2">
                 <span style:color={item.teamAColors.primary}>{item.teamA}</span>
                 ×
                 <span style:color={item.teamBColors.primary}>{item.teamB}</span>

@@ -29,7 +29,7 @@
 
     <section>
       <h2 class="section-label">Pontos</h2>
-      <div class="flex gap-3">
+      <div class="score-grid">
         <ScoreCard team="A" />
         <ScoreCard team="B" />
       </div>

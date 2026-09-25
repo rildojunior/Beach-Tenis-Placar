@@ -6,6 +6,7 @@
   import { settings } from '../stores/settings.svelte'
   import { teams } from '../stores/teams.svelte'
   import RollingNumber from './ui/RollingNumber.svelte'
+  import TeamName from './ui/TeamName.svelte'
 
   function editGames(team: TeamKey) {
     const max = maxEditableGames(settings)
@@ -32,10 +33,12 @@
   <h2 class="section-label">
     Games{settings.gamesEnabled ? ` · set de ${settings.gamesToWin}` : ''}
   </h2>
-  <div class="card grid grid-cols-[1fr_auto_1fr] items-center px-4 py-4">
+  <div
+    class="card grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-2 px-3 py-4"
+  >
     {#each ['A', 'B'] as const as team, index (team)}
       {#if index === 1}
-        <span class="h-10 w-px bg-separator" aria-hidden="true"></span>
+        <span class="h-10 w-px self-center bg-separator" aria-hidden="true"></span>
       {/if}
       <button
         type="button"
@@ -47,10 +50,10 @@
           <RollingNumber value={match.games(team)} />
         </span>
         <span
-          class="max-w-full truncate text-xs font-medium"
+          class="text-xs leading-tight font-medium"
           style:color={teams.colors[team].primary}
         >
-          {teams.names[team]}
+          <TeamName name={teams.names[team]} />
         </span>
       </button>
     {/each}
