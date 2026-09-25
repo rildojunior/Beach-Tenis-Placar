@@ -1,0 +1,170 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@theme {
+  --color-primary: #17cfcf;
+  --color-accent-orange: #fc5d24;
+  --color-background-dark: #16181d;
+  --color-card-dark: #232529;
+  --font-display: 'Spline Sans', sans-serif;
+}
+
+@layer base {
+  * {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  input,
+  textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* Desativa o zoom por toque duplo sem bloquear toques rápidos nos botões. */
+  html,
+  body,
+  button {
+    touch-action: manipulation;
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  select {
+    appearance: none;
+    background-image: none;
+  }
+}
+
+@layer components {
+  .app-header {
+    @apply mx-auto grid w-full max-w-md grid-cols-4 items-center p-4;
+  }
+  .icon-button {
+    @apply rounded-xl bg-white/5 p-2 transition hover:bg-white/10;
+  }
+  .main-shell {
+    @apply mx-auto w-full max-w-md flex-1;
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
+  .section-title {
+    @apply mb-4 text-center text-xs tracking-[0.3em] uppercase opacity-40;
+  }
+  .games-panel {
+    @apply rounded-2xl bg-card-dark/60 p-4 text-center;
+  }
+  .score-card {
+    @apply flex flex-1 flex-col items-center rounded-3xl border-b-4 bg-card-dark p-6 transition-all;
+  }
+  .score-card.leading {
+    box-shadow: 0 0 25px var(--leading-glow);
+  }
+  .team-name-label {
+    @apply relative text-center text-xs font-bold uppercase focus:outline-none;
+  }
+  /* Área de toque maior que o texto. */
+  .team-name-label::after {
+    content: '';
+    position: absolute;
+    inset: -4px -10px -12px;
+  }
+  .progress-dot {
+    @apply h-1.5 w-6 rounded-full bg-white/10;
+    transition:
+      background-color 0.35s ease,
+      transform 0.25s ease;
+  }
+  .progress-dot.active {
+    transform: scaleX(1.05);
+  }
+  .point-action {
+    @apply flex aspect-square w-full items-center justify-center rounded-3xl shadow-lg transition-transform active:scale-95;
+  }
+  .subtle-action {
+    @apply flex w-full items-center justify-center rounded-xl bg-white/5 py-3 text-white/40 transition-colors active:bg-white/10;
+  }
+  .finish-button {
+    @apply h-16 w-full rounded-2xl bg-white font-black tracking-[0.2em] text-background-dark uppercase shadow-xl transition-transform active:scale-95;
+  }
+
+  /* ----- Modais ----- */
+  .modal-overlay {
+    @apply fixed inset-0 flex items-center justify-center bg-black/60 px-4;
+  }
+  .modal-card {
+    @apply w-full max-w-sm space-y-4 rounded-2xl bg-card-dark p-6;
+  }
+  .modal-title {
+    @apply text-center text-lg font-black tracking-wide uppercase;
+  }
+  .modal-close-button {
+    @apply absolute top-1/2 right-0 -translate-y-1/2 rounded-xl p-2 transition hover:bg-white/10;
+  }
+  .form-control {
+    @apply mt-1 w-full rounded-xl border border-white/10 bg-card-dark p-3 text-white focus:ring-2 focus:ring-primary focus:outline-none;
+  }
+  .modal-primary-btn {
+    @apply h-12 w-full rounded-xl bg-primary font-black text-background-dark;
+  }
+  .modal-secondary-btn {
+    @apply h-10 w-full rounded-xl border border-white/10 text-xs tracking-widest uppercase opacity-60 transition hover:bg-white/5 hover:opacity-90;
+  }
+  .modal-share-btn {
+    @apply h-10 w-full rounded-xl bg-primary text-xs font-bold tracking-widest text-background-dark uppercase transition disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .inline-modal-btn {
+    @apply h-11 flex-1 rounded-xl text-xs tracking-widest uppercase transition;
+  }
+  .inline-modal-btn--ghost {
+    @apply border border-white/10 hover:bg-white/5;
+  }
+  .inline-modal-btn--danger {
+    @apply bg-accent-orange font-bold text-white transition-transform active:scale-95;
+  }
+  .field-label {
+    @apply text-xs uppercase opacity-60;
+  }
+
+  /* ----- Cores dos times ----- */
+  .palette-options {
+    @apply flex flex-wrap gap-1.5;
+  }
+  .palette-menu-trigger {
+    @apply flex h-12 w-full items-center justify-center rounded-xl border border-white/20 bg-white/5 px-2.5;
+  }
+  .palette-option-btn {
+    @apply flex size-8 items-center justify-center rounded-[0.65rem] border border-white/20 bg-white/5 active:scale-95;
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      opacity 0.2s ease;
+  }
+  .palette-option-btn--selected {
+    @apply border-white/70;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.2);
+  }
+  .palette-option-btn:disabled {
+    @apply cursor-not-allowed opacity-30;
+  }
+  .palette-swatch {
+    @apply inline-block size-[1.2rem] shrink-0 rounded-full border-2 border-white/25;
+  }
+
+  /* ----- Aviso de instalação ----- */
+  .install-prompt {
+    @apply fixed bottom-24 left-1/2 z-40 flex w-[90%] max-w-sm -translate-x-1/2 items-center gap-4 rounded-2xl bg-card-dark px-5 py-4 text-white shadow-xl;
+  }
+  .install-primary-btn {
+    @apply rounded-xl bg-primary px-4 py-2 font-bold text-background-dark;
+  }
+  .install-dismiss-btn {
+    @apply text-[10px] tracking-widest uppercase opacity-50 hover:opacity-80;
+  }
+}
