@@ -39,7 +39,7 @@
 
 <form onsubmit={submit}>
   <label for={inputId} class="section-label block">Novo time</label>
-  <div class="group flex items-center gap-2 py-1.5 pr-1.5 pl-2">
+  <div class="field flex items-center gap-2 py-1.5 pr-1.5 pl-2">
     <button
       type="button"
       onclick={choosePalette}
