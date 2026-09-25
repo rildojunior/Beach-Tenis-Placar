@@ -1,12 +1,11 @@
 <script lang="ts">
   import { teams } from '../../stores/teams.svelte'
   import { ui } from '../../stores/ui.svelte'
-  import Modal from '../ui/Modal.svelte'
   import PaletteOptions from '../ui/PaletteOptions.svelte'
+  import Sheet from '../ui/Sheet.svelte'
 
   function close() {
     ui.close('palettePicker')
-    ui.palettePicker = null
   }
 
   function pick(paletteId: string) {
@@ -15,17 +14,20 @@
   }
 </script>
 
-<Modal
+<Sheet
   id="palettePicker"
-  title="Selecionar Cor do Time"
+  title="Cor do time"
   closeLabel="Fechar seleção de cor"
   onclose={close}
 >
-  <div class="max-h-[50vh] overflow-y-auto pr-1">
+  <div class="card p-4">
     <PaletteOptions
       selectedId={ui.palettePicker?.selectedId ?? null}
       usedIds={teams.usedPaletteIds()}
       onpick={pick}
     />
   </div>
-</Modal>
+  <p class="-mt-3 px-4 text-[0.8125rem] text-label-2">
+    Cores apagadas já pertencem a outro time.
+  </p>
+</Sheet>

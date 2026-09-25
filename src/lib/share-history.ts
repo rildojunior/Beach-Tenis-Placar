@@ -3,7 +3,7 @@ import type { MatchRecord } from './types'
 const WIDTH = 1080
 const HEIGHT = 1920
 const MAX_MATCHES = 8
-const FONT = "'Spline Sans', sans-serif"
+const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
 const FILE_NAME = 'historico-beach-tennis.png'
 
 export const formatDate = (date: string | Date) => new Date(date).toLocaleString('pt-BR')
@@ -52,16 +52,9 @@ async function drawHistory(matches: MatchRecord[]): Promise<HTMLCanvasElement> {
   const ctx = canvas.getContext('2d')
   if (!ctx) throw new Error('Canvas 2D indisponível')
 
-  // Garante que a fonte já foi baixada antes de desenhar o texto.
-  await Promise.all(
-    ['500', '600', '700', '800'].map(weight =>
-      document.fonts.load(`${weight} 24px ${FONT}`).catch(() => [])
-    )
-  )
-
   const gradient = ctx.createLinearGradient(0, 0, 0, HEIGHT)
-  gradient.addColorStop(0, '#0f1115')
-  gradient.addColorStop(1, '#1f232a')
+  gradient.addColorStop(0, '#000000')
+  gradient.addColorStop(1, '#1c1c1e')
   ctx.fillStyle = gradient
   ctx.fillRect(0, 0, WIDTH, HEIGHT)
 

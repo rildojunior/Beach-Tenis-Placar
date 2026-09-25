@@ -1,7 +1,6 @@
-<!-- Lista de cores. Cores usadas por outros times ficam desabilitadas. -->
+<!-- Círculos de cor. Cores usadas por outros times ficam desabilitadas. -->
 <script lang="ts">
   import { TEAM_COLOR_PALETTES } from '../../lib/palettes'
-  import PaletteSwatch from './PaletteSwatch.svelte'
 
   interface Props {
     selectedId: string | null
@@ -12,20 +11,20 @@
   let { selectedId, usedIds, onpick }: Props = $props()
 </script>
 
-<div class="palette-options">
+<div class="palette-options" role="group" aria-label="Cores">
   {#each TEAM_COLOR_PALETTES as palette (palette.id)}
     {@const selected = palette.id === selectedId}
     {@const unavailable = !selected && usedIds.has(palette.id)}
     <button
       type="button"
-      class={['palette-option-btn', selected && 'palette-option-btn--selected']}
+      class="swatch-option"
       disabled={unavailable}
       aria-pressed={selected}
       aria-label={unavailable ? `${palette.label} (em uso)` : palette.label}
       title={unavailable ? `${palette.label} (em uso)` : palette.label}
       onclick={() => onpick(palette.id)}
     >
-      <PaletteSwatch color={palette.primary} />
+      <span style:background={palette.primary}></span>
     </button>
   {/each}
 </div>

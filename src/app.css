@@ -1,12 +1,35 @@
 @import 'tailwindcss';
-@plugin '@tailwindcss/forms';
 
+/*
+ * Visual inspirado nas diretrizes de design da Apple (modo escuro do iOS):
+ * cores de sistema, fonte do sistema, materiais translúcidos e molas.
+ */
 @theme {
   --color-primary: #17cfcf;
-  --color-accent-orange: #fc5d24;
-  --color-background-dark: #16181d;
-  --color-card-dark: #232529;
-  --font-display: 'Spline Sans', sans-serif;
+  --color-destructive: #ff453a;
+  --color-background-dark: #000000;
+  --color-card-dark: #1c1c1e;
+  --color-elevated: #2c2c2e;
+  --color-fill: rgb(120 120 128 / 0.24);
+  --color-fill-strong: rgb(120 120 128 / 0.36);
+  --color-separator: rgb(84 84 88 / 0.6);
+  --color-label-2: rgb(235 235 245 / 0.6);
+  --color-label-3: rgb(235 235 245 / 0.3);
+
+  --font-display:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', Roboto,
+    'Helvetica Neue', sans-serif;
+  --font-rounded:
+    ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+/* Curva de mola gerada em main.ts a partir de lib/spring.ts; estes são só valores de reserva. */
+:root {
+  --ease-spring: cubic-bezier(0.25, 1, 0.5, 1);
+  --spring-duration: 500ms;
+  --ease-spring-snappy: cubic-bezier(0.25, 1, 0.5, 1);
+  --spring-snappy-duration: 350ms;
+  color-scheme: dark;
 }
 
 @layer base {
@@ -21,14 +44,21 @@
     user-select: text;
   }
 
-  /* Desativa o zoom por toque duplo sem bloquear toques rápidos nos botões. */
   html,
-  body,
-  button {
+  body {
+    background: var(--color-background-dark);
     touch-action: manipulation;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-size: 1.0625rem; /* 17px, tamanho de texto padrão do iOS */
+    line-height: 1.3;
   }
 
   button {
+    touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -37,134 +67,364 @@
     cursor: pointer;
   }
 
-  select {
-    appearance: none;
-    background-image: none;
+  /*
+   * Resposta imediata ao toque: o botão encolhe no instante em que o dedo
+   * encosta e volta com uma mola ao soltar.
+   */
+  button {
+    transition:
+      scale var(--spring-snappy-duration) var(--ease-spring-snappy),
+      opacity 200ms ease,
+      background-color 200ms ease,
+      color 200ms ease;
+  }
+
+  button:active:not(:disabled) {
+    scale: 0.96;
+    transition-duration: 80ms;
+  }
+
+  button:disabled {
+    cursor: default;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 }
 
 @layer components {
-  .app-header {
-    @apply mx-auto grid w-full max-w-md grid-cols-4 items-center p-4;
+  /* ----- Tipografia ----- */
+  .section-label {
+    @apply px-4 pb-1.5 text-[0.8125rem] tracking-[0.02em] text-label-2 uppercase;
   }
-  .icon-button {
-    @apply rounded-xl bg-white/5 p-2 transition hover:bg-white/10;
-  }
-  .main-shell {
-    @apply mx-auto w-full max-w-md flex-1;
-    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
-  }
-  .section-title {
-    @apply mb-4 text-center text-xs tracking-[0.3em] uppercase opacity-40;
-  }
-  .games-panel {
-    @apply rounded-2xl bg-card-dark/60 p-4 text-center;
-  }
-  .score-card {
-    @apply flex flex-1 flex-col items-center rounded-3xl border-b-4 bg-card-dark p-6 transition-all;
-  }
-  .score-card.leading {
-    box-shadow: 0 0 25px var(--leading-glow);
-  }
-  .team-name-label {
-    @apply relative text-center text-xs font-bold uppercase focus:outline-none;
-  }
-  /* Área de toque maior que o texto. */
-  .team-name-label::after {
-    content: '';
-    position: absolute;
-    inset: -4px -10px -12px;
-  }
-  .progress-dot {
-    @apply h-1.5 w-6 rounded-full bg-white/10;
-    transition:
-      background-color 0.35s ease,
-      transform 0.25s ease;
-  }
-  .progress-dot.active {
-    transform: scaleX(1.05);
-  }
-  .point-action {
-    @apply flex aspect-square w-full items-center justify-center rounded-3xl shadow-lg transition-transform active:scale-95;
-  }
-  .subtle-action {
-    @apply flex w-full items-center justify-center rounded-xl bg-white/5 py-3 text-white/40 transition-colors active:bg-white/10;
-  }
-  .finish-button {
-    @apply h-16 w-full rounded-2xl bg-white font-black tracking-[0.2em] text-background-dark uppercase shadow-xl transition-transform active:scale-95;
+  .display-number {
+    font-family: var(--font-rounded);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    line-height: 1;
   }
 
-  /* ----- Modais ----- */
-  .modal-overlay {
-    @apply fixed inset-0 flex items-center justify-center bg-black/60 px-4;
+  /* ----- Materiais ----- */
+  .material-thick {
+    background: rgb(28 28 30 / 0.78);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+    box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.12);
   }
-  .modal-card {
-    @apply w-full max-w-sm space-y-4 rounded-2xl bg-card-dark p-6;
+  .material-regular {
+    background: rgb(44 44 46 / 0.72);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    box-shadow:
+      inset 0 0.5px 0 rgb(255 255 255 / 0.14),
+      0 20px 60px rgb(0 0 0 / 0.45);
   }
-  .modal-title {
-    @apply text-center text-lg font-black tracking-wide uppercase;
+
+  /* ----- Tela principal ----- */
+  .app-surface {
+    @apply flex min-h-dvh flex-col bg-background-dark;
+    transform-origin: 50% 0;
+    transition:
+      scale var(--spring-duration) var(--ease-spring),
+      translate var(--spring-duration) var(--ease-spring),
+      border-radius var(--spring-duration) var(--ease-spring);
   }
-  .modal-close-button {
-    @apply absolute top-1/2 right-0 -translate-y-1/2 rounded-xl p-2 transition hover:bg-white/10;
+  /* Com uma folha aberta, a tela de trás recua, como no iOS. */
+  .app-surface--back {
+    scale: 0.93;
+    translate: 0 calc(env(safe-area-inset-top) + 12px);
+    border-radius: 24px;
+    overflow: hidden;
   }
-  .form-control {
-    @apply mt-1 w-full rounded-xl border border-white/10 bg-card-dark p-3 text-white focus:ring-2 focus:ring-primary focus:outline-none;
+
+  .app-header {
+    @apply mx-auto grid w-full max-w-md grid-cols-[2.75rem_1fr_2.75rem] items-center px-4 pt-3 pb-2;
+    padding-top: calc(env(safe-area-inset-top) + 0.75rem);
   }
-  .modal-primary-btn {
-    @apply h-12 w-full rounded-xl bg-primary font-black text-background-dark;
+  .icon-button {
+    @apply flex size-11 items-center justify-center rounded-full bg-fill text-white;
   }
-  .modal-secondary-btn {
-    @apply h-10 w-full rounded-xl border border-white/10 text-xs tracking-widest uppercase opacity-60 transition hover:bg-white/5 hover:opacity-90;
+  .main-shell {
+    @apply mx-auto flex w-full max-w-md flex-1 flex-col gap-5 px-4 pt-2;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1.5rem);
   }
-  .modal-share-btn {
-    @apply h-10 w-full rounded-xl bg-primary text-xs font-bold tracking-widest text-background-dark uppercase transition disabled:cursor-not-allowed disabled:opacity-40;
+
+  .card {
+    @apply rounded-[1.375rem] bg-card-dark;
   }
-  .inline-modal-btn {
-    @apply h-11 flex-1 rounded-xl text-xs tracking-widest uppercase transition;
+
+  .score-card {
+    @apply rounded-[1.375rem] bg-card-dark flex flex-1 flex-col items-center gap-3 px-3 pt-4 pb-5;
+    transition: box-shadow var(--spring-duration) var(--ease-spring);
   }
-  .inline-modal-btn--ghost {
-    @apply border border-white/10 hover:bg-white/5;
+  .score-card.leading {
+    box-shadow:
+      inset 0 0 0 2px color-mix(in srgb, var(--team) 75%, transparent),
+      0 16px 48px -12px color-mix(in srgb, var(--team) 55%, transparent);
   }
-  .inline-modal-btn--danger {
-    @apply bg-accent-orange font-bold text-white transition-transform active:scale-95;
+  .team-chip {
+    @apply flex max-w-full items-center gap-1 rounded-full px-2.5 py-1 text-[0.8125rem] font-semibold;
+    background: color-mix(in srgb, var(--team) 16%, transparent);
+    color: var(--team);
   }
-  .field-label {
-    @apply text-xs uppercase opacity-60;
+  .progress-dot {
+    @apply h-1.5 w-5 rounded-full;
+    background: var(--color-fill-strong);
+    transition: background-color var(--spring-duration) var(--ease-spring);
+  }
+  .progress-dot.active {
+    background: var(--team);
+  }
+
+  .point-action {
+    @apply flex aspect-square w-full items-center justify-center rounded-[1.75rem];
+    background: var(--team);
+    color: var(--team-contrast);
+    box-shadow: 0 14px 36px -10px color-mix(in srgb, var(--team) 60%, transparent);
+  }
+  .subtle-action {
+    @apply flex h-12 w-full items-center justify-center rounded-2xl bg-card-dark text-label-2;
+  }
+  .finish-button {
+    @apply h-[3.25rem] w-full rounded-2xl bg-white text-[1.0625rem] font-semibold text-black;
+  }
+
+  /* ----- Listas agrupadas (estilo Ajustes do iOS) ----- */
+  .group {
+    @apply overflow-hidden rounded-xl bg-elevated;
+  }
+  .group > * + * {
+    box-shadow: inset 0 0.5px 0 var(--color-separator);
+  }
+  .row {
+    @apply flex min-h-11 w-full items-center gap-3 px-4 py-2.5 text-left;
+  }
+  .row-button:active:not(:disabled) {
+    scale: 1;
+    background: var(--color-fill);
+  }
+
+  /* ----- Botões ----- */
+  .btn {
+    @apply flex h-[3.125rem] w-full items-center justify-center gap-2 rounded-2xl text-[1.0625rem] font-semibold disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply flex h-[3.125rem] w-full items-center justify-center gap-2 rounded-2xl text-[1.0625rem] font-semibold disabled:opacity-40 bg-primary text-black;
+  }
+  .btn-tinted {
+    @apply flex h-[3.125rem] w-full items-center justify-center gap-2 rounded-2xl text-[1.0625rem] font-semibold disabled:opacity-40 text-primary;
+    background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  }
+  .btn-plain-destructive {
+    @apply flex h-[3.125rem] w-full items-center justify-center gap-2 rounded-2xl text-[1.0625rem] font-semibold disabled:opacity-40 text-destructive;
+    background: color-mix(in srgb, var(--color-destructive) 14%, transparent);
+  }
+
+  /* ----- Folhas (sheets) ----- */
+  .sheet-scrim {
+    @apply absolute inset-0 bg-black/45;
+  }
+  .sheet-positioner {
+    @apply pointer-events-none absolute inset-x-0 bottom-0 flex justify-center;
+    will-change: transform;
+  }
+  .sheet {
+    @apply pointer-events-auto relative flex w-full max-w-md flex-col overflow-hidden rounded-t-[1.75rem];
+    max-height: calc(100dvh - env(safe-area-inset-top) - 2.5rem);
+    transform-origin: 50% 0;
+    transition:
+      scale var(--spring-duration) var(--ease-spring),
+      translate var(--spring-duration) var(--ease-spring);
+  }
+  /* Folha que ficou por baixo de outra: recua e escurece. */
+  .sheet--buried {
+    scale: 0.94;
+    translate: 0 -10px;
+  }
+  .sheet-dim {
+    @apply pointer-events-none absolute inset-0 bg-black opacity-0;
+    transition: opacity var(--spring-duration) var(--ease-spring);
+  }
+  .sheet--buried .sheet-dim {
+    opacity: 0.35;
+  }
+  .sheet-header {
+    @apply shrink-0 cursor-grab px-4 pt-2 pb-3 active:cursor-grabbing;
+    touch-action: none;
+  }
+  .sheet-grabber {
+    @apply mx-auto mb-2 h-[5px] w-9 rounded-full bg-fill-strong;
+  }
+  .sheet-titlebar {
+    @apply grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2;
+  }
+  .sheet-title {
+    @apply text-center text-[1.0625rem] font-semibold;
+  }
+  .sheet-close {
+    @apply flex size-9 items-center justify-center rounded-full bg-fill text-label-2;
+  }
+  .sheet-body {
+    @apply flex min-h-0 flex-col gap-5 overflow-y-auto px-4;
+    overscroll-behavior: contain;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1.25rem);
+  }
+
+  /* ----- Alertas ----- */
+  .alert-scrim {
+    @apply absolute inset-0 bg-black/45;
+  }
+  .alert {
+    @apply relative w-full max-w-[18.75rem] overflow-hidden rounded-[1.375rem] text-center;
+  }
+  .alert-text {
+    @apply flex flex-col items-center gap-1.5 px-5 pt-5 pb-4;
+  }
+  .alert-title {
+    @apply text-[1.0625rem] leading-snug font-semibold;
+  }
+  .alert-message {
+    @apply text-[0.8125rem] leading-snug text-label-2;
+  }
+  .alert-actions {
+    @apply grid;
+  }
+  .alert-actions > button {
+    @apply h-11 text-[1.0625rem] text-primary;
+    box-shadow: inset 0 0.5px 0 var(--color-separator);
+  }
+  .alert-actions > button:active:not(:disabled) {
+    scale: 1;
+    background: var(--color-fill);
+  }
+  .alert-actions--row {
+    @apply grid-cols-2;
+  }
+  .alert-actions--row > button + button {
+    box-shadow:
+      inset 0 0.5px 0 var(--color-separator),
+      inset 0.5px 0 0 var(--color-separator);
+  }
+
+  /* ----- Controles ----- */
+  .switch {
+    @apply relative h-[1.9375rem] w-[3.1875rem] shrink-0 rounded-full bg-fill-strong;
+  }
+  .switch[aria-checked='true'] {
+    @apply bg-primary;
+  }
+  .switch-thumb {
+    @apply absolute top-0.5 left-0.5 size-[1.6875rem] rounded-full bg-white;
+    box-shadow:
+      0 3px 8px rgb(0 0 0 / 0.15),
+      0 3px 1px rgb(0 0 0 / 0.06);
+    transition: translate var(--spring-snappy-duration) var(--ease-spring-snappy);
+  }
+  .switch[aria-checked='true'] .switch-thumb {
+    translate: 1.25rem 0;
+  }
+
+  .segmented {
+    @apply relative grid rounded-[0.5625rem] bg-fill p-0.5;
+    grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+  }
+  .segmented-thumb {
+    @apply absolute top-0.5 bottom-0.5 left-0.5 rounded-[0.4375rem] bg-[#636366];
+    width: calc((100% - 4px) / var(--count));
+    box-shadow: 0 3px 8px rgb(0 0 0 / 0.12);
+    transition: translate var(--spring-duration) var(--ease-spring);
+  }
+  .segmented-option {
+    @apply relative h-8 rounded-[0.4375rem] text-[0.8125rem] font-medium text-label-2;
+  }
+  .segmented-option[aria-checked='true'] {
+    @apply font-semibold text-white;
+  }
+
+  .stepper {
+    @apply flex h-8 items-center rounded-lg bg-fill;
+  }
+  .stepper > button {
+    @apply flex h-full w-12 items-center justify-center disabled:text-label-3;
+  }
+  .stepper-divider {
+    @apply h-4 w-px bg-separator;
   }
 
   /* ----- Cores dos times ----- */
   .palette-options {
-    @apply flex flex-wrap gap-1.5;
+    @apply flex flex-wrap gap-2;
   }
-  .palette-menu-trigger {
-    @apply flex h-12 w-full items-center justify-center rounded-xl border border-white/20 bg-white/5 px-2.5;
+  .swatch-option {
+    @apply flex size-9 items-center justify-center rounded-full border-2 border-transparent disabled:opacity-25;
   }
-  .palette-option-btn {
-    @apply flex size-8 items-center justify-center rounded-[0.65rem] border border-white/20 bg-white/5 active:scale-95;
-    transition:
-      transform 0.2s ease,
-      border-color 0.2s ease,
-      opacity 0.2s ease;
+  .swatch-option[aria-pressed='true'] {
+    border-color: white;
   }
-  .palette-option-btn--selected {
-    @apply border-white/70;
-    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.2);
-  }
-  .palette-option-btn:disabled {
-    @apply cursor-not-allowed opacity-30;
+  .swatch-option > span {
+    @apply size-[1.625rem] rounded-full;
   }
   .palette-swatch {
-    @apply inline-block size-[1.2rem] shrink-0 rounded-full border-2 border-white/25;
+    @apply inline-block size-3 shrink-0 rounded-full;
+  }
+
+  /* ----- Número que rola ao mudar ----- */
+  .rolling {
+    @apply inline-grid;
+    overflow: hidden;
+    padding-block: 0.12em;
+    margin-block: -0.12em;
+  }
+  .rolling > * {
+    grid-area: 1 / 1;
+    text-align: center;
   }
 
   /* ----- Aviso de instalação ----- */
   .install-prompt {
-    @apply fixed bottom-24 left-1/2 z-40 flex w-[90%] max-w-sm -translate-x-1/2 items-center gap-4 rounded-2xl bg-card-dark px-5 py-4 text-white shadow-xl;
+    @apply fixed inset-x-4 z-40 mx-auto flex max-w-sm items-center gap-3 rounded-[1.375rem] p-3 pl-4;
+    bottom: calc(env(safe-area-inset-bottom) + 1rem);
   }
-  .install-primary-btn {
-    @apply rounded-xl bg-primary px-4 py-2 font-bold text-background-dark;
+}
+
+/* ----- Acessibilidade ----- */
+@media (prefers-reduced-motion: reduce) {
+  .app-surface--back,
+  .sheet--buried {
+    scale: 1;
+    translate: none;
   }
-  .install-dismiss-btn {
-    @apply text-[10px] tracking-widest uppercase opacity-50 hover:opacity-80;
+  button:active:not(:disabled) {
+    scale: 1;
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .material-thick {
+    background: var(--color-card-dark);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .material-regular {
+    background: var(--color-elevated);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .material-thick,
+  .material-regular,
+  .card,
+  .group {
+    outline: 1px solid rgb(255 255 255 / 0.35);
+    outline-offset: -1px;
+  }
+  .section-label,
+  .text-label-2 {
+    color: rgb(235 235 245 / 0.85);
   }
 }

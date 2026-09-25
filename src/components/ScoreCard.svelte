@@ -4,42 +4,36 @@
   import { match } from '../stores/match.svelte'
   import { teams } from '../stores/teams.svelte'
   import { ui } from '../stores/ui.svelte'
+  import RollingNumber from './ui/RollingNumber.svelte'
 
   let { team }: { team: TeamKey } = $props()
 
-  const color = $derived(teams.colors[team].primary)
   const points = $derived(match.points(team))
   const leading = $derived(points > match.points(otherTeam(team)))
 </script>
 
-<div
-  class="score-card"
-  class:leading
-  style:border-color={color}
-  style:--leading-glow="{color}55"
->
+<div class="score-card" class:leading style:--team={teams.colors[team].primary}>
   <button
     type="button"
     onclick={() => ui.openTeamPicker(team)}
-    class="team-name-label"
-    style:color
+    class="team-chip"
     aria-label="Trocar {teams.names[team]}"
   >
-    {teams.names[team]}
+    <span class="truncate">{teams.names[team]}</span>
+    <span class="material-symbols-outlined -mr-1 text-[1rem]!" aria-hidden="true"
+      >expand_more</span
+    >
   </button>
 
-  <div class="flex flex-1 items-center justify-center">
-    <span class="text-7xl font-black">{match.display[team]}</span>
+  <div class="flex flex-1 items-center justify-center py-2">
+    <span class="display-number text-[5.5rem] font-bold" aria-live="polite">
+      <RollingNumber value={match.display[team]} direction={match.lastDelta} />
+    </span>
   </div>
 
-  <div class="mt-2 flex gap-1" aria-hidden="true">
+  <div class="flex gap-1" aria-hidden="true">
     {#each { length: POINTS_PER_GAME }, index}
-      {@const active = index < points}
-      <div
-        class="progress-dot"
-        class:active
-        style:background-color={active ? color : null}
-      ></div>
+      <span class="progress-dot" class:active={index < points}></span>
     {/each}
   </div>
 </div>

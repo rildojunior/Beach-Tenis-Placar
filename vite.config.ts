@@ -33,8 +33,8 @@ export default defineConfig({
         short_name: 'BeachTennis',
         start_url: '/',
         display: 'standalone',
-        background_color: '#16181d',
-        theme_color: '#16181d',
+        background_color: '#000000',
+        theme_color: '#000000',
         orientation: 'portrait',
         lang: 'pt-BR',
         icons: [

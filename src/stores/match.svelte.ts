@@ -1,3 +1,4 @@
+import { haptics } from '../lib/haptics'
 import * as rules from '../lib/scoring'
 import { loadScore } from '../lib/storage'
 import type { Score, TeamKey } from '../lib/types'
@@ -8,6 +9,8 @@ import { ui } from './ui.svelte'
 
 class MatchStore {
   score: Score = $state(loadScore())
+  /** Direção da última mudança no placar, usada para animar os números. */
+  lastDelta: 1 | -1 = $state(1)
 
   readonly display = $derived({
     A: rules.formatPoints(this.score.pointsA, settings.scoringMode),
@@ -23,15 +26,19 @@ class MatchStore {
   }
 
   addPoint(team: TeamKey) {
+    const gamesBefore = this.games(team)
+    this.lastDelta = 1
     this.score = rules.addPoint(this.score, team)
-    this.checkSetEnd()
+    if (!this.checkSetEnd() && this.games(team) > gamesBefore) haptics.game()
   }
 
   removePoint(team: TeamKey) {
+    this.lastDelta = -1
     this.score = rules.removePoint(this.score, team)
   }
 
   setGames(team: TeamKey, games: number) {
+    this.lastDelta = games >= this.games(team) ? 1 : -1
     this.score = { ...this.score, [team === 'A' ? 'gamesA' : 'gamesB']: games }
     this.checkSetEnd()
   }
@@ -46,12 +53,17 @@ class MatchStore {
 
   reset({ saveToHistory }: { saveToHistory: boolean }) {
     if (saveToHistory) this.saveToHistory()
+    this.lastDelta = -1
     this.score = { ...rules.EMPTY_SCORE }
   }
 
-  private checkSetEnd() {
+  /** Mostra o vencedor se o set acabou. Retorna se acabou. */
+  private checkSetEnd(): boolean {
     const winner = rules.setWinner(this.score, settings)
-    if (winner) ui.showWinner(winner)
+    if (!winner) return false
+    haptics.set()
+    ui.showWinner(winner)
+    return true
   }
 
   private saveToHistory() {

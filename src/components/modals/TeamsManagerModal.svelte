@@ -1,56 +1,73 @@
 <script lang="ts">
+  import { slide } from 'svelte/transition'
+  import { SPRING_DEFAULT, springEasing } from '../../lib/spring'
   import { presetColors, teams } from '../../stores/teams.svelte'
   import NewTeamForm from '../NewTeamForm.svelte'
-  import Modal from '../ui/Modal.svelte'
   import PaletteOptions from '../ui/PaletteOptions.svelte'
-  import PaletteSwatch from '../ui/PaletteSwatch.svelte'
+  import Sheet from '../ui/Sheet.svelte'
+
+  const reveal = springEasing(SPRING_DEFAULT)
+
+  // Só um time mostra as cores por vez: o caminho comum fica limpo.
+  let expanded: string | null = $state(null)
 
   const isPlaying = (id: string) => teams.selection.A === id || teams.selection.B === id
 </script>
 
-<Modal id="teamsManager" title="Cadastrar Times" closeLabel="Fechar cadastro de times">
+<Sheet id="teamsManager" title="Times" closeLabel="Fechar cadastro de times">
   <NewTeamForm />
 
-  <div class="max-h-[45vh] space-y-2 overflow-y-auto pr-1">
-    {#each teams.presetsForDisplay as preset (preset.id)}
-      {@const colors = presetColors(preset)}
-      <div class="space-y-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-        <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0">
-            <p class="text-sm leading-snug font-semibold break-words">{preset.name}</p>
-            <div class="mt-1 flex items-center gap-2">
-              <PaletteSwatch color={colors.primary} />
+  <section>
+    <h3 class="section-label">Cadastrados</h3>
+    <div class="group">
+      {#each teams.presetsForDisplay as preset (preset.id)}
+        {@const colors = presetColors(preset)}
+        {@const open = expanded === preset.id}
+        <div>
+          <div class="row">
+            <button
+              class="flex min-w-0 flex-1 items-center gap-3 text-left"
+              onclick={() => (expanded = open ? null : preset.id)}
+              aria-expanded={open}
+              aria-label="Cor de {preset.name}"
+            >
+              <span
+                class="size-3.5 shrink-0 rounded-full"
+                style:background={colors.primary}
+              ></span>
+              <span class="min-w-0 flex-1 truncate">{preset.name}</span>
               {#if isPlaying(preset.id)}
-                <span class="text-[10px] tracking-widest uppercase opacity-50"
-                  >Jogando</span
-                >
+                <span class="text-[0.8125rem] text-label-2">Jogando</span>
               {/if}
-            </div>
-          </div>
-          <div class="shrink-0">
-            {#if preset.locked}
-              <span class="text-[10px] tracking-widest uppercase opacity-35">Padrão</span>
-            {:else}
+              <span
+                class="material-symbols-outlined text-[1.25rem]! text-label-3 transition-transform"
+                class:rotate-90={open}>chevron_right</span
+              >
+            </button>
+            {#if !preset.locked}
               <button
                 onclick={() => teams.remove(preset.id)}
-                class="text-[10px] tracking-widest text-accent-orange uppercase opacity-80 hover:opacity-100"
+                class="-mr-2 flex size-9 items-center justify-center rounded-full text-destructive"
+                aria-label="Excluir {preset.name}"
               >
-                Excluir
+                <span class="material-symbols-outlined text-[1.25rem]!">delete</span>
               </button>
             {/if}
           </div>
+          {#if open}
+            <div class="px-4 pb-3" transition:slide={reveal}>
+              <PaletteOptions
+                selectedId={colors.paletteId}
+                usedIds={teams.usedPaletteIds(preset.id)}
+                onpick={paletteId => teams.setPalette(preset.id, paletteId)}
+              />
+            </div>
+          {/if}
         </div>
-        <div>
-          <p class="mb-1 text-[10px] tracking-widest uppercase opacity-45">Cor do time</p>
-          <PaletteOptions
-            selectedId={colors.paletteId}
-            usedIds={teams.usedPaletteIds(preset.id)}
-            onpick={paletteId => teams.setPalette(preset.id, paletteId)}
-          />
-        </div>
-      </div>
-    {:else}
-      <p class="text-center text-sm opacity-50">Nenhum time cadastrado</p>
-    {/each}
-  </div>
-</Modal>
+      {/each}
+    </div>
+    <p class="px-4 pt-1.5 text-[0.8125rem] text-label-2">
+      Toque em um time para trocar a cor. Os times padrão não podem ser excluídos.
+    </p>
+  </section>
+</Sheet>

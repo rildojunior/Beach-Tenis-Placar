@@ -21,30 +21,30 @@
   })
 </script>
 
-<AppHeader />
+<div class={['app-surface', ui.sheetOpen && 'app-surface--back']} inert={ui.anyOpen}>
+  <AppHeader />
 
-<main class="main-shell">
-  <GamesPanel />
+  <main class="main-shell">
+    <GamesPanel />
 
-  <section class="px-4 py-2">
-    <h4 class="section-title">Pontuação da Partida</h4>
-    <div class="flex gap-3">
-      <ScoreCard team="A" />
-      <ScoreCard team="B" />
-    </div>
-  </section>
+    <section>
+      <h2 class="section-label">Pontos</h2>
+      <div class="flex gap-3">
+        <ScoreCard team="A" />
+        <ScoreCard team="B" />
+      </div>
+    </section>
 
-  <section class="mt-6 px-6 pb-8">
-    <div class="grid grid-cols-2 gap-6">
+    <div class="grid grid-cols-2 gap-3">
       <PointButtons team="A" />
       <PointButtons team="B" />
     </div>
-  </section>
 
-  <footer class="px-4 pb-6">
-    <button onclick={() => match.finish()} class="finish-button">Finalizar Set</button>
-  </footer>
-</main>
+    <button onclick={() => match.finish()} class="finish-button mt-auto"
+      >Finalizar set</button
+    >
+  </main>
+</div>
 
 <SettingsModal />
 <TeamsManagerModal />

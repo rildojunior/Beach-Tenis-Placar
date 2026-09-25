@@ -1,9 +1,9 @@
 <!-- Convite para instalar o app na tela inicial (Android e iPhone). -->
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { fly } from 'svelte/transition'
   import { isIOS, isStandalone } from '../lib/device'
   import { STORAGE_KEYS } from '../lib/storage'
+  import { rise } from '../lib/transitions'
 
   interface BeforeInstallPromptEvent extends Event {
     prompt(): Promise<void>
@@ -51,23 +51,32 @@
 </script>
 
 {#if visible}
-  <div class="install-prompt" transition:fly={{ y: 30, duration: 300 }}>
-    <span class="material-symbols-outlined text-3xl text-primary">download</span>
+  <div class="install-prompt material-regular" transition:rise>
+    <img src="/icon-192.png" alt="" class="size-11 shrink-0 rounded-[0.625rem]" />
 
-    <div class="flex-1">
-      <p class="text-sm font-bold">Instalar App</p>
-      <p class="text-xs opacity-70">
+    <div class="min-w-0 flex-1">
+      <p class="text-[0.9375rem] font-semibold">Instalar o placar</p>
+      <p class="text-[0.8125rem] leading-snug text-label-2">
         {iosHint
-          ? 'No iPhone: compartilhar → Adicionar à Tela de Início'
-          : 'Adicione o placar à tela inicial'}
+          ? 'Toque em Compartilhar e depois em Adicionar à Tela de Início.'
+          : 'Abra direto da tela inicial, mesmo sem internet.'}
       </p>
     </div>
 
-    <div class="flex flex-col items-end gap-2">
-      {#if !iosHint}
-        <button onclick={install} class="install-primary-btn">Instalar</button>
-      {/if}
-      <button onclick={dismiss} class="install-dismiss-btn">Não mostrar novamente</button>
-    </div>
+    {#if !iosHint}
+      <button
+        onclick={install}
+        class="h-8 rounded-full bg-primary px-4 text-[0.9375rem] font-semibold text-black"
+      >
+        Instalar
+      </button>
+    {/if}
+    <button
+      onclick={dismiss}
+      class="sheet-close shrink-0"
+      aria-label="Não mostrar novamente"
+    >
+      <span class="material-symbols-outlined text-[1.125rem]!">close</span>
+    </button>
   </div>
 {/if}

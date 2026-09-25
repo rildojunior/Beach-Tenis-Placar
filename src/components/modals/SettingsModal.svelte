@@ -2,16 +2,20 @@
   import { sanitizeGamesToWin } from '../../lib/scoring'
   import type { ScoringMode } from '../../lib/types'
   import { settings } from '../../stores/settings.svelte'
+  import { teams } from '../../stores/teams.svelte'
   import { ui } from '../../stores/ui.svelte'
-  import Modal from '../ui/Modal.svelte'
+  import RollingNumber from '../ui/RollingNumber.svelte'
+  import Segmented from '../ui/Segmented.svelte'
+  import Sheet from '../ui/Sheet.svelte'
+  import Stepper from '../ui/Stepper.svelte'
   import Toggle from '../ui/Toggle.svelte'
 
   // Rascunho: só vale depois de tocar em "Salvar".
   let scoringMode: ScoringMode = $state(settings.scoringMode)
   let gamesEnabled = $state(settings.gamesEnabled)
-  let gamesToWin: number | null = $state(settings.gamesToWin)
+  let gamesToWin = $state(settings.gamesToWin)
 
-  // Sempre que o modal abre, recomeça com os valores salvos.
+  // Sempre que a folha abre, recomeça com os valores salvos.
   $effect(() => {
     if (!ui.isOpen('settings')) return
     scoringMode = settings.scoringMode
@@ -27,46 +31,67 @@
   }
 </script>
 
-<Modal id="settings" title="Configurações" closeLabel="Fechar configurações">
-  {#snippet header()}
-    <h2 class="modal-title">Configurações</h2>
-    <p class="mt-1 text-center text-[10px] tracking-wide uppercase opacity-45">
-      {__APP_VERSION__}
-    </p>
+<Sheet id="settings" title="Configurações" closeLabel="Fechar configurações">
+  {#snippet subtitle()}
+    <p class="text-center text-[0.6875rem] text-label-3">{__APP_VERSION__}</p>
   {/snippet}
 
-  <div class="mt-4 space-y-3">
-    <p class="field-label">Equipes</p>
-    <button onclick={() => ui.open('teamsManager')} class="modal-secondary-btn">
-      Times Cadastrados
-    </button>
-  </div>
-
-  <div>
-    <label for="scoring-mode" class="field-label">Pontuação</label>
-    <select id="scoring-mode" bind:value={scoringMode} class="form-control">
-      <option value="official">Oficial (15,30,40)</option>
-      <option value="simplified">Simplificada (1,2,3)</option>
-    </select>
-  </div>
-
-  <div class="flex items-center justify-between gap-4">
-    <span class="field-label">Definir quantos games para vencer o set</span>
-    <Toggle bind:checked={gamesEnabled} label="Limitar games do set" />
-  </div>
-
-  {#if gamesEnabled}
-    <input
-      type="number"
-      min="1"
-      step="1"
-      inputmode="numeric"
-      placeholder="Ex: 3"
-      aria-label="Games para vencer o set"
-      bind:value={gamesToWin}
-      class="form-control"
+  <section>
+    <h3 class="section-label">Pontuação</h3>
+    <Segmented
+      label="Tipo de pontuação"
+      bind:value={scoringMode}
+      options={[
+        { value: 'official', label: '15 · 30 · 40' },
+        { value: 'simplified', label: '1 · 2 · 3' }
+      ]}
     />
-  {/if}
+  </section>
 
-  <button onclick={save} class="modal-primary-btn">Salvar</button>
-</Modal>
+  <section>
+    <h3 class="section-label">Set</h3>
+    <div class="group">
+      <div class="row justify-between">
+        <span>Limitar games do set</span>
+        <Toggle bind:checked={gamesEnabled} label="Limitar games do set" />
+      </div>
+      {#if gamesEnabled}
+        <div class="row justify-between">
+          <span>
+            Vence com
+            <span class="display-number font-semibold text-primary">
+              <RollingNumber value={gamesToWin} />
+            </span>
+            {gamesToWin === 1 ? 'game' : 'games'}
+          </span>
+          <Stepper
+            bind:value={gamesToWin}
+            min={1}
+            max={20}
+            label="Games para vencer o set"
+          />
+        </div>
+      {/if}
+    </div>
+  </section>
+
+  <section>
+    <h3 class="section-label">Equipes</h3>
+    <div class="group">
+      <button
+        class="row row-button justify-between"
+        onclick={() => ui.open('teamsManager')}
+      >
+        <span>Times cadastrados</span>
+        <span class="flex items-center gap-1 text-label-2">
+          {teams.presets.length}
+          <span class="material-symbols-outlined text-[1.25rem]! text-label-3"
+            >chevron_right</span
+          >
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <button onclick={save} class="btn-primary">Salvar</button>
+</Sheet>
