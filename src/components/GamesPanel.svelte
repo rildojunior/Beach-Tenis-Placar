@@ -5,6 +5,8 @@
   import { match } from '../stores/match.svelte'
   import { settings } from '../stores/settings.svelte'
   import { teams } from '../stores/teams.svelte'
+  import RollingNumber from './ui/RollingNumber.svelte'
+  import TeamName from './ui/TeamName.svelte'
 
   function editGames(team: TeamKey) {
     const max = maxEditableGames(settings)
@@ -27,34 +29,33 @@
   }
 </script>
 
-<section class="px-6 py-4">
-  <div class="games-panel">
-    <h3 class="mb-3 text-xs font-bold tracking-[0.3em] text-primary uppercase">
-      Pontuação dos Games
-    </h3>
-
-    <div class="flex items-center justify-center gap-8">
-      {#each ['A', 'B'] as const as team, index (team)}
-        {#if index === 1}
-          <div class="h-10 w-px rounded-full bg-white/10"></div>
-        {/if}
-        <div class="text-center">
-          <button
-            type="button"
-            onclick={() => editGames(team)}
-            class="text-4xl font-black"
-            title="Editar games de {teams.names[team]}"
-          >
-            {match.games(team)}
-          </button>
-          <span
-            class="mx-auto block max-w-[110px] text-[10px] leading-tight break-words whitespace-normal uppercase opacity-50"
-            style:color={teams.colors[team].primary}
-          >
-            {teams.names[team]}
-          </span>
-        </div>
-      {/each}
-    </div>
+<section>
+  <h2 class="section-label">
+    Games{settings.gamesEnabled ? ` · set de ${settings.gamesToWin}` : ''}
+  </h2>
+  <div
+    class="card grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-2 px-3 py-4"
+  >
+    {#each ['A', 'B'] as const as team, index (team)}
+      {#if index === 1}
+        <span class="h-10 w-px self-center bg-separator" aria-hidden="true"></span>
+      {/if}
+      <button
+        type="button"
+        onclick={() => editGames(team)}
+        class="flex min-w-0 flex-col items-center gap-1"
+        aria-label="Editar games de {teams.names[team]}: {match.games(team)}"
+      >
+        <span class="display-number text-[2.75rem] font-bold">
+          <RollingNumber value={match.games(team)} />
+        </span>
+        <span
+          class="text-xs leading-tight font-medium"
+          style:color={teams.colors[team].primary}
+        >
+          <TeamName name={teams.names[team]} />
+        </span>
+      </button>
+    {/each}
   </div>
 </section>

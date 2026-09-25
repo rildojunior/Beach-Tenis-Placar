@@ -3,24 +3,20 @@
 </script>
 
 <header class="app-header">
-  <div class="flex justify-start">
-    <button onclick={() => ui.open('history')} class="icon-button" aria-label="Histórico">
-      <span class="material-symbols-outlined text-xl">history</span>
-    </button>
+  <button onclick={() => ui.open('history')} class="icon-button" aria-label="Histórico">
+    <span class="material-symbols-outlined text-[1.375rem]!">history</span>
+  </button>
+
+  <div class="text-center">
+    <h1 class="text-[1.0625rem] leading-tight font-semibold">Beach Tennis</h1>
+    <p class="text-xs text-label-2">Placar</p>
   </div>
 
-  <div class="col-span-2 text-center">
-    <h1 class="font-black tracking-tight uppercase">Beach Tennis</h1>
-    <span class="text-xs tracking-widest text-primary">PLACAR</span>
-  </div>
-
-  <div class="flex justify-end">
-    <button
-      onclick={() => ui.open('settings')}
-      class="icon-button"
-      aria-label="Configurações"
-    >
-      <span class="material-symbols-outlined text-xl">settings</span>
-    </button>
-  </div>
+  <button
+    onclick={() => ui.open('settings')}
+    class="icon-button"
+    aria-label="Configurações"
+  >
+    <span class="material-symbols-outlined text-[1.375rem]!">settings</span>
+  </button>
 </header>

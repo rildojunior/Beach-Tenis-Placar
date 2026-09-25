@@ -2,7 +2,9 @@
   import { match } from '../../stores/match.svelte'
   import { teams } from '../../stores/teams.svelte'
   import { ui } from '../../stores/ui.svelte'
-  import Modal from '../ui/Modal.svelte'
+  import Alert from '../ui/Alert.svelte'
+
+  const winner = $derived(ui.winner ?? 'A')
 
   function newMatch() {
     match.reset({ saveToHistory: true })
@@ -10,15 +12,26 @@
   }
 </script>
 
-<Modal id="winner">
-  <h2 class="text-center text-xl font-black">🏆 FIM DO SET 🏆</h2>
+<Alert id="winner" title="{teams.names[winner]} venceu o set">
+  {#snippet icon()}
+    <span
+      class="material-symbols-outlined mb-1 text-[2.75rem]!"
+      style:color={teams.colors[winner].primary}
+      style:font-variation-settings="'FILL' 1"
+    >
+      trophy
+    </span>
+  {/snippet}
 
-  {#if ui.winner}
-    <p class="text-center text-lg font-bold">
-      <span style:color={teams.colors[ui.winner].primary}>{teams.names[ui.winner]}</span>
-      venceu o set
-    </p>
-  {/if}
+  <p class="alert-message">
+    Placar final:
+    <span class="display-number font-semibold text-white">
+      {match.score.gamesA} × {match.score.gamesB}
+    </span>
+  </p>
 
-  <button onclick={newMatch} class="modal-primary-btn">Nova Partida</button>
-</Modal>
+  {#snippet actions()}
+    <button onclick={newMatch} class="font-semibold">Nova partida</button>
+    <button onclick={() => ui.close('winner')}>Voltar ao placar</button>
+  {/snippet}
+</Alert>

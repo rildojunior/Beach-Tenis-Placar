@@ -10,6 +10,9 @@ export type ModalId =
   | 'history'
   | 'clearHistory'
 
+/** Modais em formato de alerta (centralizados). Os demais abrem como folha. */
+const ALERTS: readonly ModalId[] = ['winner', 'tie', 'clearHistory']
+
 export interface PalettePickerRequest {
   selectedId: string | null
   onPick: (paletteId: string) => void
@@ -26,6 +29,8 @@ class UiStore {
 
   readonly anyOpen = $derived(this.stack.length > 0)
   readonly top = $derived(this.stack.at(-1))
+  /** Há alguma folha aberta? A tela principal recua enquanto isso. */
+  readonly sheetOpen = $derived(this.stack.some(id => !ALERTS.includes(id)))
 
   isOpen(id: ModalId) {
     return this.stack.includes(id)
@@ -41,6 +46,13 @@ class UiStore {
 
   close(id: ModalId) {
     this.stack = this.stack.filter(item => item !== id)
+  }
+
+  /** Esc fecha só o modal do topo. */
+  handleEscape(event: KeyboardEvent, id: ModalId, onclose: () => void) {
+    if (event.key !== 'Escape' || this.top !== id || event.defaultPrevented) return
+    event.preventDefault()
+    onclose()
   }
 
   openTeamPicker(team: TeamKey) {

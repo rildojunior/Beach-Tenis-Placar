@@ -1,19 +1,16 @@
 <script lang="ts">
   import { ui } from '../../stores/ui.svelte'
-  import Modal from '../ui/Modal.svelte'
+  import Alert from '../ui/Alert.svelte'
 </script>
 
-<Modal id="tie" title="Partida Empatada">
-  <p class="text-center text-sm leading-relaxed opacity-70">
-    A partida está empatada em games.
-    <br />
-    É necessário realizar o desempate antes de finalizar.
+<Alert id="tie" title="Set empatado">
+  <p class="alert-message">
+    Os dois times têm o mesmo número de games. Jogue o desempate antes de finalizar.
   </p>
 
-  <button
-    onclick={() => ui.close('tie')}
-    class="modal-primary-btn tracking-widest uppercase transition-transform active:scale-95"
-  >
-    Continuar Partida
-  </button>
-</Modal>
+  {#snippet actions()}
+    <button onclick={() => ui.close('tie')} class="font-semibold"
+      >Continuar partida</button
+    >
+  {/snippet}
+</Alert>

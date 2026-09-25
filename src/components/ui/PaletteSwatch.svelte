@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { color }: { color: string } = $props()
+  let { color, class: className = '' }: { color: string; class?: string } = $props()
 </script>
 
-<span class="palette-swatch" style:background={color}></span>
+<span class={['palette-swatch', className]} style:background={color}></span>
